@@ -1,0 +1,93 @@
+@font-face {
+  font-family: 'Press Start 2P';
+  src: url('assets/fonts/PressStart2P-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-body: 'Press Start 2P', monospace;
+
+  --bg: #10121c;
+  --panel: #1b1e2e;
+  --panel-done: #202544;
+  --panel-border: #3a3f5c;
+  --shadow: #05060a;
+
+  --ink: #f4f4f8;
+  --ink-dim: #a7abc4;
+  --ink-faint: #6b6f8c;
+
+  --accent: #ffd23f;
+  --accent-alt: #ff9f1c;
+  --ok: #5ce65c;
+
+  --c-strength: #ff9f1c;
+  --c-endurance: #33e0ff;
+  --c-power: #ff4fa3;
+  --c-mobility: #7cff5e;
+  --c-composition: #b57bff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(circle at 20% 15%, rgba(255, 210, 63, 0.05), transparent 40%),
+    radial-gradient(circle at 80% 85%, rgba(51, 224, 255, 0.06), transparent 40%);
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.12) 0px,
+    rgba(0, 0, 0, 0.12) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: multiply;
+  z-index: 1000;
+}
+
+button {
+  font-family: inherit;
+  color: inherit;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--panel-border);
+  border: 2px solid var(--bg);
+}

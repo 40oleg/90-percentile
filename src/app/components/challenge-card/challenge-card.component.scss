@@ -1,0 +1,200 @@
+:host {
+  display: block;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  color: var(--ink);
+  background: var(--panel);
+  border: 3px solid var(--panel-border);
+  box-shadow: 4px 4px 0 var(--shadow);
+  image-rendering: pixelated;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+  overflow: hidden;
+}
+
+.card:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--shadow);
+}
+
+.icon-frame {
+  flex: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0.4rem;
+  background: var(--bg);
+  border: 2px solid var(--panel-border);
+  color: var(--ink-dim);
+  filter: grayscale(1) brightness(0.85);
+  transition:
+    color 0.2s ease,
+    filter 0.2s ease;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.title {
+  font-size: 0.62rem;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  color: var(--ink-dim);
+  transition: color 0.2s ease;
+}
+
+.desc {
+  font-size: 0.5rem;
+  line-height: 1.6;
+  color: var(--ink-faint);
+  font-family: var(--font-body);
+  letter-spacing: 0.02em;
+}
+
+.status-badge {
+  display: inline-block;
+  margin-top: 0.15rem;
+  font-size: 0.45rem;
+  letter-spacing: 0.03em;
+  padding: 0.2rem 0.4rem;
+  border: 2px solid currentColor;
+}
+
+.status-pending {
+  color: var(--ink-faint);
+}
+
+.status-done {
+  color: var(--ok);
+}
+
+/* ---- Completed state: color comes alive ---- */
+.card.done {
+  background: var(--panel-done);
+  border-color: var(--cat-color, var(--accent));
+  box-shadow: 4px 4px 0 var(--cat-color, var(--accent));
+}
+
+.card.done .icon-frame {
+  color: var(--cat-color, var(--accent));
+  border-color: var(--cat-color, var(--accent));
+  filter: none;
+}
+
+.card.done .title {
+  color: var(--ink);
+}
+
+.card.done .desc {
+  color: var(--ink-dim);
+}
+
+/* category color hooks */
+.cat-strength {
+  --cat-color: var(--c-strength);
+}
+.cat-endurance {
+  --cat-color: var(--c-endurance);
+}
+.cat-power {
+  --cat-color: var(--c-power);
+}
+.cat-mobility {
+  --cat-color: var(--c-mobility);
+}
+.cat-composition {
+  --cat-color: var(--c-composition);
+}
+
+/* ---- Burst animation on completion ---- */
+.card.burst {
+  animation: burst-pop 0.4s ease;
+}
+
+@keyframes burst-pop {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.045);
+  }
+  55% {
+    transform: scale(0.985);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.sparkles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.spark {
+  position: absolute;
+  top: 50%;
+  left: 2.2rem;
+  color: var(--cat-color, var(--accent));
+  font-size: 0.7rem;
+  opacity: 0;
+  animation: spark-fly 0.5s ease-out forwards;
+}
+
+.spark:nth-child(1) {
+  animation-delay: 0s;
+  --dx: -1.6rem;
+  --dy: -1.4rem;
+}
+.spark:nth-child(2) {
+  animation-delay: 0.03s;
+  --dx: 1.8rem;
+  --dy: -1rem;
+}
+.spark:nth-child(3) {
+  animation-delay: 0.06s;
+  --dx: -1.2rem;
+  --dy: 1.3rem;
+}
+.spark:nth-child(4) {
+  animation-delay: 0.09s;
+  --dx: 1.6rem;
+  --dy: 1.4rem;
+}
+
+@keyframes spark-fly {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) scale(1.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card.burst,
+  .spark {
+    animation: none !important;
+    transition: none !important;
+  }
+}

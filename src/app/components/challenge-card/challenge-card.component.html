@@ -1,0 +1,34 @@
+<button
+  type="button"
+  class="card"
+  [class]="categoryClass()"
+  [class.done]="completed()"
+  [class.burst]="bursting()"
+  (click)="onToggle()"
+  [attr.aria-pressed]="completed()"
+>
+  <span class="icon-frame">
+    <app-pixel-icon [icon]="challenge().icon" />
+  </span>
+
+  <span class="body">
+    <span class="title">{{ challenge().title }}</span>
+    <span class="desc">{{ challenge().description }}</span>
+    <span class="status">
+      @if (completed()) {
+        <span class="status-badge status-done">✔ ВЫПОЛНЕНО</span>
+      } @else {
+        <span class="status-badge status-pending">☐ НЕ ВЫПОЛНЕНО</span>
+      }
+    </span>
+  </span>
+
+  @if (bursting()) {
+    <span class="sparkles" aria-hidden="true">
+      <span class="spark">★</span>
+      <span class="spark">★</span>
+      <span class="spark">★</span>
+      <span class="spark">★</span>
+    </span>
+  }
+</button>

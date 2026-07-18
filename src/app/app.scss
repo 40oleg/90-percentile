@@ -1,0 +1,109 @@
+.screen {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  line-height: 1.2;
+}
+
+.title-90 {
+  color: var(--accent);
+  text-shadow: 3px 3px 0 var(--shadow);
+}
+
+.title-rest {
+  color: var(--ink);
+  font-size: 0.65rem;
+}
+
+.mute-btn {
+  flex: none;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0.5rem 0.6rem;
+  background: var(--panel);
+  border: 3px solid var(--panel-border);
+  box-shadow: 3px 3px 0 var(--shadow);
+  cursor: pointer;
+}
+
+.mute-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--shadow);
+}
+
+.subtitle {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  color: var(--ink-dim);
+  letter-spacing: 0.02em;
+}
+
+.progress-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.progress-bar {
+  height: 1.1rem;
+  border: 3px solid var(--panel-border);
+  background: var(--panel);
+  padding: 3px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--accent) 0,
+    var(--accent) 6px,
+    var(--accent-alt) 6px,
+    var(--accent-alt) 12px
+  );
+  transition: width 0.4s ease;
+}
+
+.progress-label {
+  font-size: 0.55rem;
+  color: var(--ink-dim);
+  letter-spacing: 0.03em;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.empty {
+  font-family: var(--font-body);
+  color: var(--ink-faint);
+  font-size: 0.7rem;
+  text-align: center;
+  padding: 2rem 0;
+}
