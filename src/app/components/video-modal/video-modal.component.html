@@ -1,0 +1,11 @@
+<div class="backdrop" (click)="onBackdropClick($event)">
+  <div class="panel" role="dialog" aria-modal="true" aria-label="Видео-доказательство">
+    <video [src]="videoUrl()" controls playsinline class="video"></video>
+
+    <div class="actions">
+      <button type="button" class="btn" (click)="replaceRequested.emit()">Заменить</button>
+      <button type="button" class="btn btn-danger" (click)="removeRequested.emit()">Удалить</button>
+      <button type="button" class="btn" (click)="closed.emit()">Закрыть</button>
+    </div>
+  </div>
+</div>

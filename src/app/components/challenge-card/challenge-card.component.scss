@@ -6,28 +6,74 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 0.9rem;
+  gap: 0.6rem;
   width: 100%;
   padding: 0.85rem 1rem;
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
   color: var(--ink);
   background: var(--panel);
   border: 3px solid var(--panel-border);
   box-shadow: 4px 4px 0 var(--shadow);
   image-rendering: pixelated;
   transition:
-    transform 0.12s ease,
     box-shadow 0.12s ease,
     border-color 0.2s ease,
     background 0.2s ease;
   overflow: hidden;
 }
 
-.card:active {
+.toggle-area {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.toggle-area:active {
   transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 var(--shadow);
+}
+
+.proof-btn {
+  flex: none;
+  width: 2.2rem;
+  height: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  line-height: 1;
+  background: var(--bg);
+  border: 2px solid var(--panel-border);
+  color: var(--ink-faint);
+  filter: grayscale(1) brightness(0.8);
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    filter 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.proof-btn:active {
+  transform: translate(2px, 2px);
+}
+
+.proof-btn:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.proof-btn.has-video {
+  filter: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--shadow) inset;
 }
 
 .icon-frame {
@@ -193,6 +239,8 @@
 @media (prefers-reduced-motion: reduce) {
   .card,
   .card.burst,
+  .toggle-area,
+  .proof-btn,
   .spark {
     animation: none !important;
     transition: none !important;

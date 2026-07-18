@@ -1,27 +1,51 @@
-<button
-  type="button"
-  class="card"
-  [class]="categoryClass()"
-  [class.done]="completed()"
-  [class.burst]="bursting()"
-  (click)="onToggle()"
-  [attr.aria-pressed]="completed()"
->
-  <span class="icon-frame">
-    <app-pixel-icon [icon]="challenge().icon" />
-  </span>
-
-  <span class="body">
-    <span class="title">{{ challenge().title }}</span>
-    <span class="desc">{{ challenge().description }}</span>
-    <span class="status">
-      @if (completed()) {
-        <span class="status-badge status-done">✔ ВЫПОЛНЕНО</span>
-      } @else {
-        <span class="status-badge status-pending">☐ НЕ ВЫПОЛНЕНО</span>
-      }
+<div class="card" [class]="categoryClass()" [class.done]="completed()" [class.burst]="bursting()">
+  <button
+    type="button"
+    class="toggle-area"
+    (click)="onToggle()"
+    [attr.aria-pressed]="completed()"
+  >
+    <span class="icon-frame">
+      <app-pixel-icon [icon]="challenge().icon" />
     </span>
-  </span>
+
+    <span class="body">
+      <span class="title">{{ challenge().title }}</span>
+      <span class="desc">{{ challenge().description }}</span>
+      <span class="status">
+        @if (completed()) {
+          <span class="status-badge status-done">✔ ВЫПОЛНЕНО</span>
+        } @else {
+          <span class="status-badge status-pending">☐ НЕ ВЫПОЛНЕНО</span>
+        }
+      </span>
+    </span>
+  </button>
+
+  @if (videoAvailable) {
+    <button
+      type="button"
+      class="proof-btn"
+      [class.has-video]="hasVideo()"
+      [disabled]="videoBusy()"
+      (click)="onProofButtonClick()"
+      [attr.aria-label]="
+        hasVideo() ? 'Смотреть видео-доказательство' : 'Прикрепить видео-доказательство'
+      "
+      title="Видео-доказательство (опционально)"
+    >
+      🎥
+    </button>
+
+    <input
+      #fileInput
+      type="file"
+      accept="video/*"
+      capture="environment"
+      hidden
+      (change)="onFileSelected($event)"
+    />
+  }
 
   @if (bursting()) {
     <span class="sparkles" aria-hidden="true">
@@ -31,4 +55,13 @@
       <span class="spark">★</span>
     </span>
   }
-</button>
+</div>
+
+@if (videoUrl(); as url) {
+  <app-video-modal
+    [videoUrl]="url"
+    (closed)="closeViewer()"
+    (replaceRequested)="onReplaceRequested()"
+    (removeRequested)="onRemoveRequested()"
+  />
+}

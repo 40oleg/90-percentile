@@ -1,0 +1,58 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(5, 6, 10, 0.85);
+  z-index: 2000;
+}
+
+.panel {
+  width: 100%;
+  max-width: 30rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1rem;
+  background: var(--panel);
+  border: 3px solid var(--accent);
+  box-shadow: 6px 6px 0 var(--shadow);
+}
+
+.video {
+  width: 100%;
+  max-height: 60vh;
+  background: #000;
+  border: 2px solid var(--panel-border);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.btn {
+  flex: 1 1 auto;
+  font-family: inherit;
+  font-size: 0.5rem;
+  letter-spacing: 0.03em;
+  padding: 0.6rem 0.5rem;
+  color: var(--ink);
+  background: var(--bg);
+  border: 3px solid var(--panel-border);
+  box-shadow: 3px 3px 0 var(--shadow);
+  cursor: pointer;
+}
+
+.btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--shadow);
+}
+
+.btn-danger {
+  color: #ff6f6f;
+  border-color: #ff6f6f;
+}
