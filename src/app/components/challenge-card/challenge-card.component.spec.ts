@@ -148,6 +148,11 @@ describe('ChallengeCardComponent', () => {
       expect(fixture.nativeElement.querySelector('input[type="file"]')).toBeTruthy();
     });
 
+    it('does not force the camera — the file input has no "capture" attribute, so the OS picker offers the gallery', () => {
+      const input: HTMLInputElement = fixture.nativeElement.querySelector('input[type="file"]');
+      expect(input.hasAttribute('capture')).toBe(false);
+    });
+
     it('is dim (no has-video class) when no proof is attached', () => {
       expect(proofBtn()!.classList.contains('has-video')).toBe(false);
     });

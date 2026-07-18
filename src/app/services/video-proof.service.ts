@@ -27,6 +27,9 @@ export class VideoProofService {
     return this.ids().has(id);
   }
 
+  /** IndexedDB clones the Blob's bytes into storage, not a reference to the
+   * source file — the clip survives even if the original is later deleted
+   * from the phone's gallery. */
   async save(id: string, file: Blob): Promise<void> {
     const db = await this.openDb();
     await new Promise<void>((resolve, reject) => {
