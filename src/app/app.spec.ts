@@ -55,9 +55,9 @@ describe('App', () => {
     firstToggle.click();
     await fixture.whenStable();
 
-    const doneTab = Array.from(
-      fixture.nativeElement.querySelectorAll('.filter-btn'),
-    ).find((b) => (b as HTMLElement).textContent?.trim() === 'ГОТОВО') as HTMLButtonElement;
+    const doneTab = Array.from(fixture.nativeElement.querySelectorAll('.filter-btn')).find(
+      (b) => (b as HTMLElement).textContent?.trim() === 'ГОТОВО',
+    ) as HTMLButtonElement;
     doneTab.click();
     await fixture.whenStable();
 
@@ -69,9 +69,9 @@ describe('App', () => {
     firstToggle.click();
     await fixture.whenStable();
 
-    const inProgressTab = Array.from(
-      fixture.nativeElement.querySelectorAll('.filter-btn'),
-    ).find((b) => (b as HTMLElement).textContent?.trim() === 'В ПРОЦЕССЕ') as HTMLButtonElement;
+    const inProgressTab = Array.from(fixture.nativeElement.querySelectorAll('.filter-btn')).find(
+      (b) => (b as HTMLElement).textContent?.trim() === 'В ПРОЦЕССЕ',
+    ) as HTMLButtonElement;
     inProgressTab.click();
     await fixture.whenStable();
 
@@ -98,6 +98,11 @@ describe('App', () => {
 
     async function openCalories(): Promise<void> {
       navButton('ККАЛ').click();
+      await fixture.whenStable();
+    }
+
+    async function openQuiz(): Promise<void> {
+      navButton('ТЕСТ').click();
       await fixture.whenStable();
     }
 
@@ -157,6 +162,68 @@ describe('App', () => {
       await fixture.whenStable();
 
       await openCalories();
+      navButton('ЧЕЛЛЕНДЖИ').click();
+      await fixture.whenStable();
+
+      expect(progressLabel()).toContain(`1/${CHALLENGES.length}`);
+    });
+
+    it('switches to the quiz section from the menu', async () => {
+      await openQuiz();
+
+      expect(fixture.nativeElement.querySelector('app-quiz-page')).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('.start-btn')).toBeTruthy();
+    });
+
+    it('hides the other sections while on the quiz', async () => {
+      await openQuiz();
+
+      expect(cards().length).toBe(0);
+      expect(fixture.nativeElement.querySelector('app-calorie-page')).toBeNull();
+      expect(fixture.nativeElement.querySelector('.progress-label')).toBeNull();
+    });
+
+    it('keeps the header and the mute button on the quiz section', async () => {
+      await openQuiz();
+
+      expect(fixture.nativeElement.querySelector('h1')?.textContent).toContain('PERCENTILE');
+      expect(fixture.nativeElement.querySelector('.mute-btn')).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('.nav-menu')).toBeTruthy();
+    });
+
+    it('remembers the quiz section for the next launch', async () => {
+      await openQuiz();
+      TestBed.tick();
+      expect(localStorage.getItem('90percentile.view')).toBe('quiz');
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({ imports: [App] }).compileComponents();
+      const relaunched = TestBed.createComponent(App);
+      relaunched.autoDetectChanges();
+      await relaunched.whenStable();
+
+      expect(relaunched.nativeElement.querySelector('app-quiz-page')).toBeTruthy();
+    });
+
+    it('keeps a running test alive across a section switch', async () => {
+      await openQuiz();
+      fixture.nativeElement.querySelector('.start-btn').click();
+      await fixture.whenStable();
+      const step = fixture.nativeElement.querySelector('.runner-step').textContent.trim();
+
+      navButton('ЧЕЛЛЕНДЖИ').click();
+      await fixture.whenStable();
+      await openQuiz();
+
+      expect(fixture.nativeElement.querySelector('.runner-step').textContent.trim()).toBe(step);
+      expect(fixture.nativeElement.querySelectorAll('.option')).toHaveLength(4);
+    });
+
+    it('keeps challenge progress intact across a quiz switch', async () => {
+      cards()[0].querySelector<HTMLButtonElement>('.toggle-area')!.click();
+      await fixture.whenStable();
+
+      await openQuiz();
       navButton('ЧЕЛЛЕНДЖИ').click();
       await fixture.whenStable();
 

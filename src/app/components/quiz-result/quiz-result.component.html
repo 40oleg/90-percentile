@@ -1,0 +1,49 @@
+<section class="result">
+  <div class="score-panel" [class.on-target]="onTarget()">
+    <span class="score-caption">{{ topicTitle() }} · РЕЗУЛЬТАТ</span>
+
+    <strong
+      class="score-value"
+      [class.on-target]="onTarget()"
+      role="status"
+      [attr.aria-label]="'Результат ' + percent() + ' процентов, ' + correct() + ' из ' + total()"
+    >
+      {{ percent() }}%
+    </strong>
+
+    <span class="score-detail">{{ correct() }} / {{ total() }} ВЕРНО</span>
+
+    <div class="score-bar" aria-hidden="true">
+      <div class="score-fill" [class.on-target]="onTarget()" [style.width.%]="percent()"></div>
+      <span class="score-target" [style.left.%]="target"></span>
+    </div>
+
+    <span class="score-verdict" [class.on-target]="onTarget()">{{ verdict() }}</span>
+  </div>
+
+  <div class="result-actions">
+    <button type="button" class="again-btn" (click)="again.emit()">ЕЩЁ РАЗ</button>
+    <button type="button" class="close-btn" (click)="closed.emit()">К ТЕМАМ</button>
+  </div>
+
+  @if (mistakes().length > 0) {
+    <div class="review">
+      <h2 class="review-title">РАЗБОР ОШИБОК · {{ mistakes().length }}</h2>
+
+      @for (question of mistakes(); track question.id) {
+        <article class="miss">
+          <p class="miss-prompt">{{ question.prompt }}</p>
+          <p class="miss-line wrong">
+            <span class="miss-tag">ТЫ:</span> {{ answerText(question) }}
+          </p>
+          <p class="miss-line ok">
+            <span class="miss-tag">ВЕРНО:</span> {{ correctText(question) }}
+          </p>
+          <p class="miss-why">{{ question.explanation }}</p>
+        </article>
+      }
+    </div>
+  } @else {
+    <p class="clean-sheet">НИ ОДНОЙ ОШИБКИ. ИДЕАЛЬНО.</p>
+  }
+</section>

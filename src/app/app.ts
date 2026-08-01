@@ -6,11 +6,18 @@ import { ChallengeCardComponent } from './components/challenge-card/challenge-ca
 import { FilterBarComponent } from './components/filter-bar/filter-bar.component';
 import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
 import { CaloriePageComponent } from './components/calorie-page/calorie-page.component';
+import { QuizPageComponent } from './components/quiz-page/quiz-page.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [ChallengeCardComponent, FilterBarComponent, NavMenuComponent, CaloriePageComponent],
+  imports: [
+    ChallengeCardComponent,
+    FilterBarComponent,
+    NavMenuComponent,
+    CaloriePageComponent,
+    QuizPageComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './app.html',
   styleUrl: './app.scss',

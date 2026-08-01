@@ -39,14 +39,16 @@ describe('NavMenuComponent', () => {
   }
 
   it('renders one button per section', () => {
-    expect(buttons()).toHaveLength(2);
+    expect(buttons()).toHaveLength(3);
     expect(button('ЧЕЛЛЕНДЖИ')).toBeTruthy();
     expect(button('ККАЛ')).toBeTruthy();
+    expect(button('ТЕСТ')).toBeTruthy();
   });
 
   it('marks the active section', () => {
     expect(button('ЧЕЛЛЕНДЖИ').classList.contains('active')).toBe(true);
     expect(button('ККАЛ').classList.contains('active')).toBe(false);
+    expect(button('ТЕСТ').classList.contains('active')).toBe(false);
   });
 
   it('exposes the active section to assistive tech', () => {
@@ -59,6 +61,13 @@ describe('NavMenuComponent', () => {
     await fixture.whenStable();
 
     expect(host.emitted).toEqual(['calories']);
+  });
+
+  it('emits the quiz section', async () => {
+    button('ТЕСТ').click();
+    await fixture.whenStable();
+
+    expect(host.emitted).toEqual(['quiz']);
   });
 
   it('does not re-emit when the active section is clicked again', async () => {

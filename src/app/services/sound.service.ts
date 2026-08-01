@@ -54,6 +54,41 @@ export class SoundService {
     ]);
   }
 
+  /** Bright rising blip — a quiz answer was right. */
+  playCorrect(): void {
+    this.playNotes([
+      { freq: 659.25, start: 0, dur: 0.05 },
+      { freq: 987.77, start: 0.05, dur: 0.09 },
+    ]);
+  }
+
+  /** Dull low buzz — a quiz answer was wrong. */
+  playWrong(): void {
+    this.playNotes([
+      { freq: 155.56, start: 0, dur: 0.08 },
+      { freq: 116.54, start: 0.08, dur: 0.14 },
+    ]);
+  }
+
+  /** Four-note victory jingle — a quiz run finished on target. */
+  playFanfare(): void {
+    this.playNotes([
+      { freq: 523.25, start: 0, dur: 0.08 },
+      { freq: 659.25, start: 0.08, dur: 0.08 },
+      { freq: 783.99, start: 0.16, dur: 0.08 },
+      { freq: 1046.5, start: 0.24, dur: 0.22 },
+    ]);
+  }
+
+  /** Descending game-over motif — a quiz run finished below target. */
+  playFail(): void {
+    this.playNotes([
+      { freq: 392.0, start: 0, dur: 0.1 },
+      { freq: 349.23, start: 0.1, dur: 0.1 },
+      { freq: 293.66, start: 0.2, dur: 0.24 },
+    ]);
+  }
+
   private playNotes(notes: { freq: number; start: number; dur: number }[]): void {
     if (this.muted()) return;
     const ctx = this.ensureContext();

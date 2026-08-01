@@ -2,9 +2,9 @@ import { Injectable, effect, signal } from '@angular/core';
 
 const STORAGE_KEY = '90percentile.view';
 
-export type AppView = 'challenges' | 'calories';
+export type AppView = 'challenges' | 'calories' | 'quiz';
 
-const VIEWS: readonly AppView[] = ['challenges', 'calories'];
+const VIEWS: readonly AppView[] = ['challenges', 'calories', 'quiz'];
 
 /** Which screen the app shows, remembered across launches. */
 @Injectable({ providedIn: 'root' })

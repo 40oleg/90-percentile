@@ -36,6 +36,7 @@ export class NavMenuComponent {
   protected readonly options: NavOption[] = [
     { view: 'challenges', label: 'ЧЕЛЛЕНДЖИ', icon: '🏆' },
     { view: 'calories', label: 'ККАЛ', icon: '🍞' },
+    { view: 'quiz', label: 'ТЕСТ', icon: '🧠' },
   ];
 
   select(view: AppView): void {

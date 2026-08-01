@@ -1,0 +1,172 @@
+.quiz-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ---- Topics ---- */
+
+.topic-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.topic {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  font-family: inherit;
+  text-align: left;
+  padding: 0.7rem 0.6rem;
+  color: var(--ink-dim);
+  background: var(--panel);
+  border: 3px solid var(--panel-border);
+  box-shadow: 3px 3px 0 var(--shadow);
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    border-color 0.15s ease;
+}
+
+.topic:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--shadow);
+}
+
+.topic.active {
+  border-color: var(--accent);
+}
+
+.topic-icon {
+  flex: none;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.topic-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.topic-title {
+  font-size: 0.55rem;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+}
+
+.topic.active .topic-title {
+  color: var(--accent);
+}
+
+.topic-desc {
+  font-size: 0.4rem;
+  line-height: 1.7;
+  color: var(--ink-faint);
+}
+
+.topic-meta {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+  font-size: 0.35rem;
+  line-height: 1.5;
+  text-align: right;
+  color: var(--ink-faint);
+}
+
+.topic-best {
+  color: var(--ok);
+}
+
+/* ---- Start ---- */
+
+.start-btn {
+  font-family: inherit;
+  font-size: 0.55rem;
+  letter-spacing: 0.05em;
+  padding: 0.9rem 0.6rem;
+  color: var(--bg);
+  background: var(--accent);
+  border: 3px solid var(--accent);
+  box-shadow: 4px 4px 0 var(--shadow);
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+.start-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--shadow);
+}
+
+/* ---- Stats ---- */
+
+.qstats {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.qstat {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  min-width: 0;
+  padding: 0.5rem 0.2rem;
+  background: var(--panel);
+  border: 3px solid var(--panel-border);
+  box-shadow: 3px 3px 0 var(--shadow);
+}
+
+.qstat-label {
+  font-size: 0.3rem;
+  letter-spacing: 0.03em;
+  text-align: center;
+  color: var(--ink-faint);
+}
+
+.qstat-value {
+  font-size: 0.55rem;
+  color: var(--ink);
+}
+
+.on-target-line {
+  margin: 0;
+  font-size: 0.4rem;
+  line-height: 1.7;
+  text-align: center;
+  color: var(--ink-faint);
+}
+
+.reset-btn {
+  font-family: inherit;
+  font-size: 0.4rem;
+  letter-spacing: 0.04em;
+  padding: 0.55rem 0.5rem;
+  color: var(--ink-faint);
+  background: var(--panel);
+  border: 3px solid var(--panel-border);
+  cursor: pointer;
+}
+
+.reset-btn.armed {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topic,
+  .start-btn {
+    transition: none;
+  }
+}

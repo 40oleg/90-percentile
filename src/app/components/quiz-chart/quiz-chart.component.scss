@@ -1,0 +1,119 @@
+.chart {
+  margin: 0;
+  padding: 0.7rem 0.6rem 0.6rem;
+  background: var(--panel);
+  border: 3px solid var(--panel-border);
+  box-shadow: 3px 3px 0 var(--shadow);
+}
+
+.chart-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.chart-title {
+  font-size: 0.4rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+}
+
+.chart-count {
+  font-size: 0.4rem;
+  color: var(--ink-dim);
+}
+
+.plot-row {
+  display: flex;
+  gap: 0.35rem;
+}
+
+/* The labels are pinned to the values they mark, so the target label lines up
+   with the dashed target line rather than floating at mid-height. */
+.axis-y {
+  position: relative;
+  flex: none;
+  width: 1.1rem;
+  font-size: 0.3rem;
+  line-height: 1;
+  text-align: right;
+  color: var(--ink-faint);
+}
+
+.axis-bottom,
+.axis-target {
+  position: absolute;
+  right: 0;
+}
+
+.axis-bottom {
+  bottom: 0;
+}
+
+.axis-target {
+  color: var(--accent);
+  transform: translateY(50%);
+}
+
+.plot {
+  position: relative;
+  flex: 1 1 auto;
+  height: 6.5rem;
+  min-width: 0;
+  padding: 2px;
+  background: var(--bg);
+  border: 2px solid var(--panel-border);
+  overflow: hidden;
+}
+
+.grid-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 1px dashed var(--accent);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 1px;
+  height: 100%;
+}
+
+.bar {
+  flex: 1 1 0;
+  min-width: 1px;
+  background: var(--ink-faint);
+}
+
+.bar.high {
+  background: var(--ok);
+}
+
+.bar.mid {
+  background: var(--accent);
+}
+
+.bar.low {
+  background: var(--accent-alt);
+}
+
+.bar.bad {
+  background: var(--danger);
+}
+
+.chart-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin: 0;
+  font-size: 0.4rem;
+  letter-spacing: 0.05em;
+  color: var(--ink-faint);
+}

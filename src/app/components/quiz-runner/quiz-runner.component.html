@@ -1,0 +1,45 @@
+@if (current(); as question) {
+  <section class="runner">
+    <div class="runner-top">
+      <span class="runner-step">ВОПРОС {{ index() + 1 }}/{{ total() }}</span>
+      <span class="runner-score">✔ {{ correctCount() }}</span>
+      <button type="button" class="quit-btn" [class.armed]="confirmQuit()" (click)="onQuit()">
+        {{ confirmQuit() ? 'ТОЧНО?' : 'ВЫЙТИ' }}
+      </button>
+    </div>
+
+    <div class="segments" aria-hidden="true">
+      @for (segment of segments(); track $index) {
+        <span class="segment" [class]="'segment ' + segment"></span>
+      }
+    </div>
+
+    <p class="prompt">{{ question.prompt }}</p>
+
+    <div class="options" role="group" aria-label="Варианты ответа">
+      @for (option of question.options; track $index; let i = $index) {
+        <button
+          type="button"
+          class="option"
+          [class]="'option ' + optionState(i)"
+          [disabled]="isAnswered()"
+          (click)="onAnswer(i)"
+        >
+          <span class="option-key" aria-hidden="true">{{ letters[i] }}</span>
+          <span class="option-text">{{ option }}</span>
+        </button>
+      }
+    </div>
+
+    @if (isAnswered()) {
+      <div class="feedback" [class.ok]="isCorrect()" role="status">
+        <span class="feedback-title">{{ isCorrect() ? 'ВЕРНО' : 'НЕВЕРНО' }}</span>
+        <p class="feedback-text">{{ question.explanation }}</p>
+      </div>
+
+      <button type="button" class="next-btn" (click)="advanced.emit()">
+        {{ isLast() ? 'РЕЗУЛЬТАТ' : 'ДАЛЬШЕ' }}
+      </button>
+    }
+  </section>
+}

@@ -1,0 +1,100 @@
+<section class="quiz-page">
+  @switch (session.status()) {
+    @case ('running') {
+      <app-quiz-runner
+        [questions]="session.questions()"
+        [index]="session.index()"
+        (answered)="onAnswer($event)"
+        (advanced)="onNext()"
+        (quit)="onQuit()"
+      />
+    }
+
+    @case ('finished') {
+      <app-quiz-result
+        [correct]="session.correctCount()"
+        [total]="session.total()"
+        [mistakes]="session.mistakes()"
+        [topicTitle]="topic().title"
+        (again)="onAgain()"
+        (closed)="onClose()"
+      />
+
+      <app-quiz-chart [attempts]="chartAttempts()" [capacity]="chartCapacity" [target]="target" />
+    }
+
+    @default {
+      <div class="topic-list" role="group" aria-label="Темы тестов">
+        @for (card of topicCards(); track card.topic.id) {
+          <button
+            type="button"
+            class="topic"
+            [class.active]="card.topic.id === quiz.topicId()"
+            [attr.aria-pressed]="card.topic.id === quiz.topicId()"
+            (click)="onSelectTopic(card.topic.id)"
+          >
+            <span class="topic-icon" aria-hidden="true">{{ card.topic.icon }}</span>
+            <span class="topic-body">
+              <span class="topic-title">{{ card.topic.title }}</span>
+              <span class="topic-desc">{{ card.topic.description }}</span>
+            </span>
+            <span class="topic-meta">
+              <span class="topic-pool">{{ card.topic.questions.length }} ВОПР.</span>
+              <span class="topic-best">
+                @if (card.stats.attempts > 0) {
+                  ЛУЧШИЙ {{ card.stats.best }}%
+                } @else {
+                  НЕ СДАВАЛСЯ
+                }
+              </span>
+            </span>
+          </button>
+        }
+      </div>
+
+      <button type="button" class="start-btn" (click)="onStart()">
+        НАЧАТЬ ТЕСТ · {{ runLength() }} ВОПРОСОВ
+      </button>
+
+      <div class="qstats">
+        <span class="qstat">
+          <span class="qstat-label">ПОПЫТОК</span>
+          <span class="qstat-value">{{ stats().attempts }}</span>
+        </span>
+        <span class="qstat">
+          <span class="qstat-label">ПОСЛЕДНИЙ</span>
+          <span class="qstat-value">{{ percentLabel(stats().last) }}</span>
+        </span>
+        <span class="qstat">
+          <span class="qstat-label">ЛУЧШИЙ</span>
+          <span class="qstat-value">{{
+            percentLabel(stats().attempts ? stats().best : null)
+          }}</span>
+        </span>
+        <span class="qstat">
+          <span class="qstat-label">СРЕДНИЙ</span>
+          <span class="qstat-value">
+            {{ percentLabel(stats().attempts ? stats().average : null) }}
+          </span>
+        </span>
+      </div>
+
+      <app-quiz-chart [attempts]="chartAttempts()" [capacity]="chartCapacity" [target]="target" />
+
+      <p class="on-target-line">
+        РЕЗУЛЬТАТОВ ≥ {{ target }}%: {{ stats().onTarget }} ИЗ {{ stats().attempts }}
+      </p>
+
+      @if (stats().attempts > 0) {
+        <button
+          type="button"
+          class="reset-btn"
+          [class.armed]="confirmReset()"
+          (click)="onResetStats()"
+        >
+          {{ confirmReset() ? 'ТОЧНО СБРОСИТЬ?' : 'СБРОСИТЬ СТАТИСТИКУ' }}
+        </button>
+      }
+    }
+  }
+</section>
