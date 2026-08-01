@@ -5,7 +5,9 @@ import {
   findTopic,
   questionsPerRun,
 } from './quiz-topics.data';
+import { AI_QUESTIONS } from './quiz/ai.questions';
 import { ANGULAR_QUESTIONS } from './quiz/angular.questions';
+import { MATH_QUESTIONS } from './quiz/math.questions';
 import { QuizTopic } from '../models/quiz.model';
 
 describe('quiz topics', () => {
@@ -112,12 +114,23 @@ describe('quiz topics', () => {
   );
 });
 
-describe('angular question pack', () => {
+describe.each([
+  ['angular', ANGULAR_QUESTIONS],
+  ['ai', AI_QUESTIONS],
+  ['math', MATH_QUESTIONS],
+])('%s question pack', (topicId, pack) => {
   it('holds at least 100 questions', () => {
-    expect(ANGULAR_QUESTIONS.length).toBeGreaterThanOrEqual(100);
+    expect(pack.length).toBeGreaterThanOrEqual(100);
   });
 
-  it('is the pack wired into the angular topic', () => {
-    expect(findTopic('angular')!.questions).toBe(ANGULAR_QUESTIONS);
+  it('is the pack wired into its topic', () => {
+    expect(findTopic(topicId)!.questions).toBe(pack);
+  });
+});
+
+describe('question ids across packs', () => {
+  it('are globally unique', () => {
+    const ids = QUIZ_TOPICS.flatMap((topic) => topic.questions.map((q) => q.id));
+    expect(new Set(ids).size).toBe(ids.length);
   });
 });

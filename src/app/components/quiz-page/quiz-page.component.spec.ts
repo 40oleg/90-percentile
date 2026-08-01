@@ -108,6 +108,83 @@ describe('QuizPageComponent', () => {
     });
   });
 
+  describe('choosing a topic', () => {
+    function topicButton(title: string): HTMLButtonElement {
+      return all('.topic').find((t) =>
+        t.querySelector('.topic-title')!.textContent!.includes(title),
+      ) as HTMLButtonElement;
+    }
+
+    async function selectTopic(title: string): Promise<void> {
+      topicButton(title).click();
+      await fixture.whenStable();
+    }
+
+    it('lists all three topics with their own pools', () => {
+      expect(all('.topic')).toHaveLength(3);
+      const pools = all('.topic-pool').map((p) => p.textContent!.trim());
+      expect(new Set(pools).size).toBeGreaterThan(1);
+    });
+
+    it('moves the selection to the tapped topic', async () => {
+      await selectTopic('ВЫШМАТ');
+
+      expect(quiz.topicId()).toBe('math');
+      expect(topicButton('ВЫШМАТ').className).toContain('active');
+      expect(topicButton('ANGULAR').className).not.toContain('active');
+    });
+
+    it('starts the run on the selected topic', async () => {
+      await selectTopic('ИИ');
+      await start();
+
+      expect(session.topicId()).toBe('ai');
+      const packIds = new Set(QUIZ_TOPICS.find((t) => t.id === 'ai')!.questions.map((q) => q.id));
+      expect(session.questions().every((q) => packIds.has(q.id))).toBe(true);
+    });
+
+    it('keeps statistics separate per topic', async () => {
+      await selectTopic('ИИ');
+      await start();
+      await playRun(15);
+      await click('.close-btn');
+
+      expect(statValue('ПОПЫТОК')).toBe('1');
+      expect(statValue('ЛУЧШИЙ')).toBe('100%');
+
+      await selectTopic('ВЫШМАТ');
+
+      expect(statValue('ПОПЫТОК')).toBe('0');
+      expect(statValue('ЛУЧШИЙ')).toBe('—');
+      expect(quiz.attemptsFor('ai')).toHaveLength(1);
+      expect(quiz.attemptsFor('math')).toEqual([]);
+    });
+
+    it('resets only the selected topic history', async () => {
+      await selectTopic('ИИ');
+      await start();
+      await playRun(9);
+      await click('.close-btn');
+      await selectTopic('ВЫШМАТ');
+      await start();
+      await playRun(9);
+      await click('.close-btn');
+
+      await click('.reset-btn');
+      await click('.reset-btn');
+
+      expect(quiz.attemptsFor('math')).toEqual([]);
+      expect(quiz.attemptsFor('ai')).toHaveLength(1);
+    });
+
+    it('remembers the chosen topic for the next launch', async () => {
+      await selectTopic('ВЫШМАТ');
+      TestBed.tick();
+
+      expect(localStorage.getItem('90percentile.quiz.topic')).toBe('math');
+    });
+  });
+
   describe('running a test', () => {
     beforeEach(async () => {
       await start();

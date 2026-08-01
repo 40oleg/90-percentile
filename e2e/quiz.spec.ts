@@ -80,7 +80,7 @@ test.describe('quiz section', () => {
 
     await page.locator('.nav-btn', { hasText: 'ТЕСТ' }).click();
 
-    await expect(page.locator('.topic')).toHaveCount(1);
+    await expect(page.locator('.topic')).toHaveCount(3);
     await expect(page.locator('.card')).toHaveCount(0);
     await expect(page.locator('.start-btn')).toContainText('15 ВОПРОСОВ');
   });
@@ -91,7 +91,7 @@ test.describe('quiz section', () => {
     await expect(stat(page, 0)).toHaveText('0');
     await expect(stat(page, 1)).toHaveText('—');
     await expect(page.locator('.chart-empty')).toBeVisible();
-    await expect(page.locator('.topic-best')).toHaveText('НЕ СДАВАЛСЯ');
+    await expect(page.locator('.topic-best').first()).toHaveText('НЕ СДАВАЛСЯ');
     await expect(page.locator('.reset-btn')).toHaveCount(0);
   });
 
@@ -180,8 +180,43 @@ test.describe('quiz section', () => {
     await expect(stat(page, 1)).toHaveText('60%');
     await expect(stat(page, 2)).toHaveText('60%');
     await expect(stat(page, 3)).toHaveText('60%');
-    await expect(page.locator('.topic-best')).toHaveText('ЛУЧШИЙ 60%');
+    await expect(page.locator('.topic-best').first()).toHaveText('ЛУЧШИЙ 60%');
     await expect(page.locator('.on-target-line')).toContainText('0 ИЗ 1');
+  });
+
+  test('each topic keeps its own statistics', async ({ page }) => {
+    await openQuiz(page);
+
+    // Take a perfect run on the AI topic.
+    await page.locator('.topic', { hasText: 'ИИ' }).click();
+    await page.locator('.start-btn').click();
+    await playRun(page, 15);
+    await page.locator('.close-btn').click();
+    await expect(stat(page, 0)).toHaveText('1');
+    await expect(stat(page, 2)).toHaveText('100%');
+
+    // Switching to another topic shows that topic's (empty) history.
+    await page.locator('.topic', { hasText: 'ВЫШМАТ' }).click();
+    await expect(stat(page, 0)).toHaveText('0');
+    await expect(stat(page, 2)).toHaveText('—');
+    await expect(page.locator('.chart-empty')).toBeVisible();
+
+    // And switching back restores it.
+    await page.locator('.topic', { hasText: 'ИИ' }).click();
+    await expect(stat(page, 0)).toHaveText('1');
+    await expect(page.locator('.bar')).toHaveCount(1);
+  });
+
+  test('the selected topic survives a reload', async ({ page }) => {
+    await openQuiz(page);
+    await page.locator('.topic', { hasText: 'ВЫШМАТ' }).click();
+    // Let the selection settle before reloading — the write is an effect, so a
+    // reload fired on the same tick can beat it to localStorage.
+    await expect(page.locator('.topic.active .topic-title')).toHaveText('ВЫШМАТ');
+
+    await page.reload();
+
+    await expect(page.locator('.topic.active .topic-title')).toHaveText('ВЫШМАТ');
   });
 
   test('ЕЩЁ РАЗ draws a fresh run', async ({ page }) => {
