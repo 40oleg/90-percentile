@@ -1,0 +1,101 @@
+:host {
+  display: block;
+}
+
+.log-empty {
+  margin: 0;
+  padding: 1.4rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.5rem;
+  line-height: 1.7;
+  text-align: center;
+  color: var(--ink-faint);
+  background: var(--panel);
+  border: 3px solid var(--panel-border);
+  box-shadow: 4px 4px 0 var(--shadow);
+}
+
+.log-viewport {
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--panel);
+  border: 3px solid var(--panel-border);
+  box-shadow: 4px 4px 0 var(--shadow);
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.log-spacer {
+  position: relative;
+}
+
+.log-window {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  will-change: transform;
+}
+
+/* Height is bound inline from ROW_HEIGHT — keep the box model padding-free
+   so the rendered row height stays exactly what the window math assumes. */
+.log-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 0.7rem;
+  border-bottom: 2px solid var(--bg);
+}
+
+.log-date {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.45rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.log-kcal {
+  flex: none;
+  font-size: 0.6rem;
+  color: var(--accent);
+  text-shadow: 2px 2px 0 var(--shadow);
+}
+
+.log-remove {
+  flex: none;
+  width: 1.6rem;
+  height: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-size: 0.5rem;
+  line-height: 1;
+  color: var(--ink-faint);
+  background: var(--bg);
+  border: 2px solid var(--panel-border);
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.log-remove:hover {
+  color: var(--ink);
+  border-color: var(--ink-faint);
+}
+
+.log-remove:active {
+  transform: translate(1px, 1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .log-remove {
+    transition: none;
+  }
+}

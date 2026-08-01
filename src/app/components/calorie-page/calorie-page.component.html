@@ -1,0 +1,78 @@
+<section class="calorie-page">
+  <div class="average-panel" [class.over]="overNorm()">
+    <span class="average-caption">СРЕДНЕЕ ЗА ДЕНЬ</span>
+
+    <strong
+      class="average-value"
+      [class.over]="overNorm()"
+      role="status"
+      [attr.aria-label]="'Среднее потребление ' + average() + ' килокалорий в день'"
+    >
+      {{ average() }}
+    </strong>
+
+    <span class="average-unit">ККАЛ / ДЕНЬ</span>
+
+    <div class="norm-bar" aria-hidden="true">
+      <div class="norm-fill" [class.over]="overNorm()" [style.width.%]="normFill()"></div>
+    </div>
+
+    <span class="norm-label">
+      НОРМА {{ calories.norm }} ·
+      @if (overNorm()) {
+        <span class="norm-state over">ПРЕВЫШЕНА</span>
+      } @else {
+        <span class="norm-state ok">В НОРМЕ</span>
+      }
+    </span>
+  </div>
+
+  <!-- novalidate: the section shows its own pixel-styled error instead of the
+       browser bubble, which would otherwise swallow the submit entirely. -->
+  <form class="entry-form" novalidate (submit)="onSubmit($event)">
+    <label class="entry-label" for="kcal-input">СКОЛЬКО СЪЕЛ?</label>
+    <div class="entry-row">
+      <input
+        id="kcal-input"
+        class="entry-input"
+        type="number"
+        inputmode="numeric"
+        min="1"
+        [attr.max]="maxEntry"
+        step="1"
+        placeholder="1000"
+        autocomplete="off"
+        [value]="draft()"
+        (input)="onInput($event)"
+      />
+      <button type="submit" class="entry-submit">ЗАПИСАТЬ</button>
+    </div>
+
+    <div class="quick-row">
+      @for (amount of quickAdd; track amount) {
+        <button type="button" class="quick-btn" (click)="onQuickAdd(amount)">+{{ amount }}</button>
+      }
+    </div>
+
+    @if (error()) {
+      <p class="entry-error" role="alert">{{ error() }}</p>
+    }
+  </form>
+
+  <div class="stats-row">
+    <span class="stat">
+      <span class="stat-label">СЕГОДНЯ</span>
+      <span class="stat-value">{{ calories.todayKcal() }}</span>
+    </span>
+    <span class="stat">
+      <span class="stat-label">ДНЕЙ</span>
+      <span class="stat-value">{{ calories.daysTracked() }}</span>
+    </span>
+    <span class="stat">
+      <span class="stat-label">ВСЕГО</span>
+      <span class="stat-value">{{ calories.totalKcal() }}</span>
+    </span>
+  </div>
+
+  <app-calorie-log [entries]="calories.entries()" (removed)="onRemove($event)" />
+</section>

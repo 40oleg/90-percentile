@@ -88,6 +88,99 @@ describe('App', () => {
     expect(progressLabel()).toContain(`0/${CHALLENGES.length}`);
   });
 
+  describe('section menu', () => {
+    function navButton(label: string): HTMLButtonElement {
+      const root = fixture.nativeElement as HTMLElement;
+      return Array.from(root.querySelectorAll<HTMLButtonElement>('.nav-btn')).find((b) =>
+        b.textContent?.includes(label),
+      )!;
+    }
+
+    async function openCalories(): Promise<void> {
+      navButton('ККАЛ').click();
+      await fixture.whenStable();
+    }
+
+    it('opens on the challenges section by default', () => {
+      expect(fixture.nativeElement.querySelector('app-calorie-page')).toBeNull();
+      expect(cards().length).toBe(CHALLENGES.length);
+    });
+
+    it('switches to the calorie section from the menu', async () => {
+      await openCalories();
+
+      expect(fixture.nativeElement.querySelector('app-calorie-page')).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('.average-value')).toBeTruthy();
+    });
+
+    it('hides the challenge list and its filters while on the calorie section', async () => {
+      await openCalories();
+
+      expect(cards().length).toBe(0);
+      expect(fixture.nativeElement.querySelector('.filter-bar')).toBeNull();
+      expect(fixture.nativeElement.querySelector('.progress-label')).toBeNull();
+    });
+
+    it('keeps the header and the mute button on both sections', async () => {
+      await openCalories();
+
+      expect(fixture.nativeElement.querySelector('h1')?.textContent).toContain('PERCENTILE');
+      expect(fixture.nativeElement.querySelector('.mute-btn')).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('.nav-menu')).toBeTruthy();
+    });
+
+    it('switches back to the challenges section', async () => {
+      await openCalories();
+      navButton('ЧЕЛЛЕНДЖИ').click();
+      await fixture.whenStable();
+
+      expect(fixture.nativeElement.querySelector('app-calorie-page')).toBeNull();
+      expect(cards().length).toBe(CHALLENGES.length);
+    });
+
+    it('remembers the calorie section for the next launch', async () => {
+      await openCalories();
+      TestBed.tick();
+      expect(localStorage.getItem('90percentile.view')).toBe('calories');
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({ imports: [App] }).compileComponents();
+      const relaunched = TestBed.createComponent(App);
+      relaunched.autoDetectChanges();
+      await relaunched.whenStable();
+
+      expect(relaunched.nativeElement.querySelector('app-calorie-page')).toBeTruthy();
+    });
+
+    it('keeps challenge progress intact across a section switch', async () => {
+      cards()[0].querySelector<HTMLButtonElement>('.toggle-area')!.click();
+      await fixture.whenStable();
+
+      await openCalories();
+      navButton('ЧЕЛЛЕНДЖИ').click();
+      await fixture.whenStable();
+
+      expect(progressLabel()).toContain(`1/${CHALLENGES.length}`);
+    });
+
+    it('keeps logged calories intact across a section switch', async () => {
+      await openCalories();
+      const input: HTMLInputElement = fixture.nativeElement.querySelector('.entry-input');
+      input.value = '1500';
+      input.dispatchEvent(new Event('input'));
+      fixture.nativeElement
+        .querySelector('.entry-form')
+        .dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      await fixture.whenStable();
+
+      navButton('ЧЕЛЛЕНДЖИ').click();
+      await fixture.whenStable();
+      await openCalories();
+
+      expect(fixture.nativeElement.querySelector('.average-value').textContent.trim()).toBe('1500');
+    });
+  });
+
   it('toggles the mute button state and icon', async () => {
     const muteBtn: HTMLButtonElement = fixture.nativeElement.querySelector('.mute-btn');
     expect(muteBtn.getAttribute('aria-pressed')).toBe('false');

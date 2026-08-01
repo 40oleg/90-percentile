@@ -47,9 +47,16 @@ describe('SoundService', () => {
     expect(() => service.playClick()).not.toThrow();
   });
 
+  it('playAdd/playWarn never throw, even without WebAudio support', () => {
+    expect(() => service.playAdd()).not.toThrow();
+    expect(() => service.playWarn()).not.toThrow();
+  });
+
   it('does not attempt playback while muted', () => {
     service.toggleMuted();
     expect(service.muted()).toBe(true);
     expect(() => service.playComplete()).not.toThrow();
+    expect(() => service.playAdd()).not.toThrow();
+    expect(() => service.playWarn()).not.toThrow();
   });
 });

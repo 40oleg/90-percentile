@@ -1,13 +1,16 @@
 import { ChangeDetectionStrategy, Component, HostListener } from '@angular/core';
 import { ChallengeStateService, FilterMode } from './services/challenge-state.service';
 import { SoundService } from './services/sound.service';
+import { AppView, ViewStateService } from './services/view-state.service';
 import { ChallengeCardComponent } from './components/challenge-card/challenge-card.component';
 import { FilterBarComponent } from './components/filter-bar/filter-bar.component';
+import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
+import { CaloriePageComponent } from './components/calorie-page/calorie-page.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [ChallengeCardComponent, FilterBarComponent],
+  imports: [ChallengeCardComponent, FilterBarComponent, NavMenuComponent, CaloriePageComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './app.html',
   styleUrl: './app.scss',
@@ -18,6 +21,7 @@ export class App {
   constructor(
     protected readonly state: ChallengeStateService,
     protected readonly sound: SoundService,
+    protected readonly view: ViewStateService,
   ) {}
 
   @HostListener('document:pointerdown')
@@ -39,6 +43,11 @@ export class App {
 
   onFilterChange(mode: FilterMode): void {
     this.state.setFilter(mode);
+    this.sound.playClick();
+  }
+
+  onViewChange(view: AppView): void {
+    this.view.setView(view);
     this.sound.playClick();
   }
 

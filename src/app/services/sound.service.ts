@@ -38,6 +38,22 @@ export class SoundService {
     this.playNotes([{ freq: 440, start: 0, dur: 0.04 }]);
   }
 
+  /** Coin-style pickup — a calorie entry was logged within the norm. */
+  playAdd(): void {
+    this.playNotes([
+      { freq: 987.77, start: 0, dur: 0.05 },
+      { freq: 1318.51, start: 0.05, dur: 0.1 },
+    ]);
+  }
+
+  /** Low two-note warning — the logged average went over the daily norm. */
+  playWarn(): void {
+    this.playNotes([
+      { freq: 220, start: 0, dur: 0.09 },
+      { freq: 174.61, start: 0.1, dur: 0.16 },
+    ]);
+  }
+
   private playNotes(notes: { freq: number; start: number; dur: number }[]): void {
     if (this.muted()) return;
     const ctx = this.ensureContext();

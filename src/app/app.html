@@ -16,6 +16,12 @@
       </button>
     </div>
 
+    <app-nav-menu [active]="view.view()" (changed)="onViewChange($event)" />
+  </header>
+
+  @if (view.view() === 'calories') {
+    <app-calorie-page />
+  } @else {
     <p class="subtitle">Стань сильнее и быстрее 90% людей на планете</p>
 
     <div class="progress-wrap">
@@ -26,19 +32,19 @@
         {{ state.completedCount() }}/{{ state.total }} · {{ state.percentile() }}%
       </span>
     </div>
-  </header>
 
-  <app-filter-bar [active]="state.filter()" (changed)="onFilterChange($event)" />
+    <app-filter-bar [active]="state.filter()" (changed)="onFilterChange($event)" />
 
-  <main class="list">
-    @for (challenge of state.visibleChallenges(); track challenge.id) {
-      <app-challenge-card
-        [challenge]="challenge"
-        [completed]="state.isCompleted(challenge.id)"
-        (toggled)="onToggle($event)"
-      />
-    } @empty {
-      <p class="empty">Ничего не найдено для этого фильтра.</p>
-    }
-  </main>
+    <main class="list">
+      @for (challenge of state.visibleChallenges(); track challenge.id) {
+        <app-challenge-card
+          [challenge]="challenge"
+          [completed]="state.isCompleted(challenge.id)"
+          (toggled)="onToggle($event)"
+        />
+      } @empty {
+        <p class="empty">Ничего не найдено для этого фильтра.</p>
+      }
+    </main>
+  }
 </div>

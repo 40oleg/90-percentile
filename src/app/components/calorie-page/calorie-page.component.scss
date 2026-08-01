@@ -1,0 +1,242 @@
+.calorie-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+/* ---- Average ---- */
+
+.average-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 1.4rem 1rem 1.1rem;
+  text-align: center;
+  background: var(--panel);
+  border: 3px solid var(--panel-border);
+  box-shadow: 4px 4px 0 var(--shadow);
+  transition: border-color 0.25s ease;
+}
+
+.average-panel.over {
+  border-color: var(--danger);
+}
+
+.average-caption {
+  font-size: 0.45rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+}
+
+.average-value {
+  font-size: 2.75rem;
+  line-height: 1.1;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--ok);
+  text-shadow: 4px 4px 0 var(--shadow);
+  transition: color 0.25s ease;
+}
+
+.average-value.over {
+  color: var(--danger);
+}
+
+.average-unit {
+  font-size: 0.45rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-dim);
+}
+
+.norm-bar {
+  width: 100%;
+  height: 0.85rem;
+  margin-top: 0.2rem;
+  padding: 2px;
+  background: var(--bg);
+  border: 3px solid var(--panel-border);
+}
+
+.norm-fill {
+  height: 100%;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--ok) 0,
+    var(--ok) 6px,
+    #3fbf3f 6px,
+    #3fbf3f 12px
+  );
+  transition:
+    width 0.35s ease,
+    background 0.25s ease;
+}
+
+.norm-fill.over {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--danger) 0,
+    var(--danger) 6px,
+    var(--danger-dim) 6px,
+    var(--danger-dim) 12px
+  );
+}
+
+.norm-label {
+  font-size: 0.45rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+}
+
+.norm-state.ok {
+  color: var(--ok);
+}
+
+.norm-state.over {
+  color: var(--danger);
+}
+
+/* ---- Input ---- */
+
+.entry-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.entry-label {
+  font-size: 0.45rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+}
+
+.entry-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.entry-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: inherit;
+  font-size: 0.75rem;
+  padding: 0.65rem 0.6rem;
+  color: var(--ink);
+  background: var(--bg);
+  border: 3px solid var(--panel-border);
+  box-shadow: inset 2px 2px 0 var(--shadow);
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.entry-input::-webkit-outer-spin-button,
+.entry-input::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.entry-input::placeholder {
+  color: var(--ink-faint);
+}
+
+.entry-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.entry-submit {
+  flex: none;
+  font-family: inherit;
+  font-size: 0.5rem;
+  letter-spacing: 0.03em;
+  padding: 0.6rem 0.75rem;
+  color: var(--bg);
+  background: var(--accent);
+  border: 3px solid var(--accent);
+  box-shadow: 3px 3px 0 var(--shadow);
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+.entry-submit:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--shadow);
+}
+
+.quick-row {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.quick-btn {
+  flex: 1 1 auto;
+  font-family: inherit;
+  font-size: 0.45rem;
+  letter-spacing: 0.02em;
+  padding: 0.5rem 0.35rem;
+  color: var(--ink-dim);
+  background: var(--panel);
+  border: 3px solid var(--panel-border);
+  box-shadow: 3px 3px 0 var(--shadow);
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    color 0.15s ease;
+}
+
+.quick-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--shadow);
+  color: var(--accent);
+}
+
+.entry-error {
+  margin: 0;
+  font-size: 0.45rem;
+  line-height: 1.6;
+  color: var(--danger);
+}
+
+/* ---- Stats ---- */
+
+.stats-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.stat {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.55rem 0.3rem;
+  background: var(--panel);
+  border: 3px solid var(--panel-border);
+  box-shadow: 3px 3px 0 var(--shadow);
+}
+
+.stat-label {
+  font-size: 0.4rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+}
+
+.stat-value {
+  font-size: 0.6rem;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .average-value,
+  .average-panel,
+  .norm-fill,
+  .entry-submit,
+  .quick-btn {
+    transition: none;
+  }
+}

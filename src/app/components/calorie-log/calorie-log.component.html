@@ -1,0 +1,30 @@
+@if (entries().length === 0) {
+  <p class="log-empty">Пока ничего не записано. Внеси первый приём пищи.</p>
+} @else {
+  <div
+    class="log-viewport"
+    [style.height.px]="viewportHeight"
+    (scroll)="onScroll($event)"
+    role="list"
+    aria-label="Записи потребления"
+  >
+    <div class="log-spacer" [style.height.px]="totalHeight()">
+      <div class="log-window" [style.transform]="'translateY(' + offsetY() + 'px)'">
+        @for (entry of visibleEntries(); track entry.id) {
+          <div class="log-row" role="listitem" [style.height.px]="rowHeight">
+            <span class="log-date">{{ formatDate(entry.at) }}</span>
+            <span class="log-kcal">{{ entry.kcal }}</span>
+            <button
+              type="button"
+              class="log-remove"
+              [attr.aria-label]="'Удалить запись ' + entry.kcal + ' ккал'"
+              (click)="onRemove(entry.id)"
+            >
+              ✕
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}
