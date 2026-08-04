@@ -134,3 +134,42 @@ describe('question ids across packs', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 });
+
+/**
+ * A pack is worthless if the right answer can be picked without knowing the
+ * subject, and the cheapest such tell is length: the elaborate option is the
+ * correct one. These bounds lock that in for the Angular pack; the other packs
+ * still have to be cleaned up the same way.
+ */
+describe('angular pack cannot be answered by option length', () => {
+  const lengths = (q: (typeof ANGULAR_QUESTIONS)[number]) => q.options.map((o) => o.length);
+  const margin = (q: (typeof ANGULAR_QUESTIONS)[number]) => {
+    const lens = lengths(q);
+    const others = lens.filter((_, i) => i !== q.correctIndex);
+    return lens[q.correctIndex] - Math.max(...others);
+  };
+
+  it('never lets the correct option run away from the longest distractor', () => {
+    const offenders = ANGULAR_QUESTIONS.filter((q) => margin(q) > 6).map((q) => q.id);
+    expect(offenders).toEqual([]);
+  });
+
+  it('keeps all four options within one length band', () => {
+    const offenders = ANGULAR_QUESTIONS.filter((q) => {
+      const lens = lengths(q);
+      return Math.max(...lens) - Math.min(...lens) > 24;
+    }).map((q) => q.id);
+    expect(offenders).toEqual([]);
+  });
+
+  it('leaves the longest option on a distractor most of the time', () => {
+    const longest = ANGULAR_QUESTIONS.filter((q) => margin(q) > 0).length;
+    expect(longest / ANGULAR_QUESTIONS.length).toBeLessThanOrEqual(0.45);
+  });
+
+  it('spreads the stored correct answer over all four positions', () => {
+    const counts = [0, 0, 0, 0];
+    for (const question of ANGULAR_QUESTIONS) counts[question.correctIndex]++;
+    expect(Math.min(...counts)).toBeGreaterThan(ANGULAR_QUESTIONS.length / 8);
+  });
+});
