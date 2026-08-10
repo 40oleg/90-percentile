@@ -1,0 +1,240 @@
+.pressure-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+/* ---- Average ---- */
+
+.average-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.2rem 1rem 1rem;
+  text-align: center;
+  background: var(--panel);
+  border: 3px solid var(--panel-border);
+  box-shadow: 4px 4px 0 var(--shadow);
+  transition: border-color 0.25s ease;
+}
+
+.average-caption {
+  font-size: 0.45rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+}
+
+.average-value {
+  font-size: 2.1rem;
+  line-height: 1.1;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--ink-dim);
+  text-shadow: 4px 4px 0 var(--shadow);
+  transition: color 0.25s ease;
+}
+
+.average-unit {
+  font-size: 0.45rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-dim);
+}
+
+.category {
+  font-size: 0.5rem;
+  letter-spacing: 0.06em;
+  padding: 0.3rem 0.5rem;
+  color: var(--bg);
+  background: var(--ink-dim);
+}
+
+/* One accent per band, on the frame, the number and the badge at once. */
+.average-panel.normal {
+  border-color: var(--ok);
+  .average-value {
+    color: var(--ok);
+  }
+  .category {
+    background: var(--ok);
+  }
+}
+
+.average-panel.elevated {
+  border-color: var(--accent);
+  .average-value {
+    color: var(--accent);
+  }
+  .category {
+    background: var(--accent);
+  }
+}
+
+.average-panel.high1 {
+  border-color: var(--accent-alt);
+  .average-value {
+    color: var(--accent-alt);
+  }
+  .category {
+    background: var(--accent-alt);
+  }
+}
+
+.average-panel.high2 {
+  border-color: var(--danger);
+  .average-value {
+    color: var(--danger);
+  }
+  .category {
+    background: var(--danger);
+  }
+}
+
+.average-panel.low {
+  border-color: var(--c-endurance);
+  .average-value {
+    color: var(--c-endurance);
+  }
+  .category {
+    background: var(--c-endurance);
+  }
+}
+
+/* ---- Stats ---- */
+
+.stats-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.stat {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.55rem 0.3rem;
+  background: var(--panel);
+  border: 3px solid var(--panel-border);
+  box-shadow: 3px 3px 0 var(--shadow);
+}
+
+.stat-label {
+  font-size: 0.4rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+}
+
+.stat-value {
+  font-size: 0.5rem;
+  text-align: center;
+  color: var(--ink);
+}
+
+/* ---- Input ---- */
+
+.entry-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.entry-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.field {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.field-label {
+  font-size: 0.4rem;
+  letter-spacing: 0.05em;
+  color: var(--ink-faint);
+}
+
+.field-input {
+  width: 100%;
+  min-width: 0;
+  font-family: inherit;
+  font-size: 0.7rem;
+  text-align: center;
+  padding: 0.6rem 0.35rem;
+  color: var(--ink);
+  background: var(--bg);
+  border: 3px solid var(--panel-border);
+  box-shadow: inset 2px 2px 0 var(--shadow);
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.field-input::-webkit-outer-spin-button,
+.field-input::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.field-input::placeholder {
+  color: var(--ink-faint);
+}
+
+.field-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.entry-submit {
+  font-family: inherit;
+  font-size: 0.5rem;
+  letter-spacing: 0.03em;
+  padding: 0.65rem 0.75rem;
+  color: var(--bg);
+  background: var(--accent);
+  border: 3px solid var(--accent);
+  box-shadow: 3px 3px 0 var(--shadow);
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+.entry-submit:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--shadow);
+}
+
+.slot-hint {
+  margin: 0;
+  font-size: 0.35rem;
+  line-height: 1.7;
+  letter-spacing: 0.03em;
+  color: var(--ink-faint);
+}
+
+.entry-error {
+  margin: 0;
+  font-size: 0.45rem;
+  line-height: 1.6;
+  color: var(--danger);
+}
+
+/* ---- Charts ---- */
+
+.charts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .average-panel,
+  .average-value,
+  .entry-submit {
+    transition: none;
+  }
+}

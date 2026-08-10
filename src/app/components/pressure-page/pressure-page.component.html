@@ -1,0 +1,123 @@
+<section class="pressure-page">
+  <div class="average-panel" [class]="categoryClass()">
+    <span class="average-caption">СРЕДНЕЕ ЗА {{ pressure.chartDays }} ДНЕЙ</span>
+
+    @if (average(); as avg) {
+      <strong
+        class="average-value"
+        role="status"
+        [attr.aria-label]="
+          'Среднее давление ' +
+          avg.systolic +
+          ' на ' +
+          avg.diastolic +
+          ', пульс ' +
+          avg.pulse +
+          ' — ' +
+          categoryLabel()
+        "
+      >
+        {{ avg.systolic }}/{{ avg.diastolic }}
+      </strong>
+      <span class="average-unit">ПУЛЬС {{ avg.pulse }} · {{ avg.count }} ЗАМ.</span>
+      <span class="category">{{ categoryLabel() }}</span>
+    } @else {
+      <strong class="average-value" role="status">—/—</strong>
+      <span class="average-unit">ЗАМЕРОВ ПОКА НЕТ</span>
+    }
+  </div>
+
+  <div class="stats-row">
+    <span class="stat">
+      <span class="stat-label">{{ slotLabels.morning }}</span>
+      <span class="stat-value">
+        @if (morning(); as m) {
+          {{ m.systolic }}/{{ m.diastolic }} · {{ m.pulse }}
+        } @else {
+          —
+        }
+      </span>
+    </span>
+    <span class="stat">
+      <span class="stat-label">{{ slotLabels.evening }}</span>
+      <span class="stat-value">
+        @if (evening(); as e) {
+          {{ e.systolic }}/{{ e.diastolic }} · {{ e.pulse }}
+        } @else {
+          —
+        }
+      </span>
+    </span>
+    <span class="stat">
+      <span class="stat-label">ВСЕГО</span>
+      <span class="stat-value">{{ pressure.count() }}</span>
+    </span>
+  </div>
+
+  <!-- novalidate: the section shows its own pixel-styled error instead of the
+       browser bubble, which would otherwise swallow the submit entirely. -->
+  <form class="entry-form" novalidate (submit)="onSubmit($event)">
+    <div class="entry-row">
+      <label class="field">
+        <span class="field-label">ВЕРХНЕЕ</span>
+        <input
+          class="field-input"
+          type="number"
+          inputmode="numeric"
+          [attr.min]="limits.systolic.min"
+          [attr.max]="limits.systolic.max"
+          step="1"
+          placeholder="120"
+          autocomplete="off"
+          [value]="systolic()"
+          (input)="onInput('systolic', $event)"
+        />
+      </label>
+
+      <label class="field">
+        <span class="field-label">НИЖНЕЕ</span>
+        <input
+          class="field-input"
+          type="number"
+          inputmode="numeric"
+          [attr.min]="limits.diastolic.min"
+          [attr.max]="limits.diastolic.max"
+          step="1"
+          placeholder="80"
+          autocomplete="off"
+          [value]="diastolic()"
+          (input)="onInput('diastolic', $event)"
+        />
+      </label>
+
+      <label class="field">
+        <span class="field-label">ПУЛЬС</span>
+        <input
+          class="field-input"
+          type="number"
+          inputmode="numeric"
+          [attr.min]="limits.pulse.min"
+          [attr.max]="limits.pulse.max"
+          step="1"
+          placeholder="65"
+          autocomplete="off"
+          [value]="pulse()"
+          (input)="onInput('pulse', $event)"
+        />
+      </label>
+    </div>
+
+    <button type="submit" class="entry-submit">ДОБАВИТЬ</button>
+
+    <p class="slot-hint">ЗАПИШЕТСЯ КАК {{ slotHint() }} · ДО 12:00 УТРО, ПОСЛЕ — ВЕЧЕР</p>
+
+    @if (error()) {
+      <p class="entry-error" role="alert">{{ error() }}</p>
+    }
+  </form>
+
+  <div class="charts">
+    <app-pressure-chart [title]="slotLabels.morning" [points]="pressure.morningSeries()" />
+    <app-pressure-chart [title]="slotLabels.evening" [points]="pressure.eveningSeries()" />
+  </div>
+</section>

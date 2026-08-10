@@ -48,6 +48,15 @@ describe('ViewStateService', () => {
     expect(freshService().view()).toBe('challenges');
   });
 
+  it('switches to the pressure view', () => {
+    service.setView('pressure');
+    TestBed.tick();
+
+    expect(service.view()).toBe('pressure');
+    expect(localStorage.getItem(KEY)).toBe('pressure');
+    expect(freshService().view()).toBe('pressure');
+  });
+
   it('falls back to challenges for an unknown stored value', () => {
     localStorage.setItem(KEY, 'nonsense');
 

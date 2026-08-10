@@ -7,6 +7,7 @@ import { FilterBarComponent } from './components/filter-bar/filter-bar.component
 import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
 import { CaloriePageComponent } from './components/calorie-page/calorie-page.component';
 import { QuizPageComponent } from './components/quiz-page/quiz-page.component';
+import { PressurePageComponent } from './components/pressure-page/pressure-page.component';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +18,7 @@ import { QuizPageComponent } from './components/quiz-page/quiz-page.component';
     NavMenuComponent,
     CaloriePageComponent,
     QuizPageComponent,
+    PressurePageComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './app.html',

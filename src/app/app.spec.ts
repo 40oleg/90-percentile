@@ -106,6 +106,11 @@ describe('App', () => {
       await fixture.whenStable();
     }
 
+    async function openPressure(): Promise<void> {
+      navButton('ДАВЛЕНИЕ').click();
+      await fixture.whenStable();
+    }
+
     it('opens on the challenges section by default', () => {
       expect(fixture.nativeElement.querySelector('app-calorie-page')).toBeNull();
       expect(cards().length).toBe(CHALLENGES.length);
@@ -203,6 +208,59 @@ describe('App', () => {
       await relaunched.whenStable();
 
       expect(relaunched.nativeElement.querySelector('app-quiz-page')).toBeTruthy();
+    });
+
+    it('switches to the pressure section from the menu', async () => {
+      await openPressure();
+
+      expect(fixture.nativeElement.querySelector('app-pressure-page')).toBeTruthy();
+      expect(fixture.nativeElement.querySelectorAll('.field-input')).toHaveLength(3);
+      expect(fixture.nativeElement.querySelectorAll('app-pressure-chart')).toHaveLength(2);
+    });
+
+    it('hides the other sections while on the pressure diary', async () => {
+      await openPressure();
+
+      expect(cards().length).toBe(0);
+      expect(fixture.nativeElement.querySelector('app-calorie-page')).toBeNull();
+      expect(fixture.nativeElement.querySelector('app-quiz-page')).toBeNull();
+      expect(fixture.nativeElement.querySelector('.progress-label')).toBeNull();
+    });
+
+    it('remembers the pressure section for the next launch', async () => {
+      await openPressure();
+      TestBed.tick();
+      expect(localStorage.getItem('90percentile.view')).toBe('pressure');
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({ imports: [App] }).compileComponents();
+      const relaunched = TestBed.createComponent(App);
+      relaunched.autoDetectChanges();
+      await relaunched.whenStable();
+
+      expect(relaunched.nativeElement.querySelector('app-pressure-page')).toBeTruthy();
+    });
+
+    it('keeps logged readings intact across a section switch', async () => {
+      await openPressure();
+      const root = fixture.nativeElement as HTMLElement;
+      const inputs = Array.from(root.querySelectorAll<HTMLInputElement>('.field-input'));
+      ['120', '80', '65'].forEach((value, i) => {
+        inputs[i].value = value;
+        inputs[i].dispatchEvent(new Event('input'));
+      });
+      fixture.nativeElement
+        .querySelector('.entry-form')
+        .dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      await fixture.whenStable();
+
+      navButton('ЧЕЛЛЕНДЖИ').click();
+      await fixture.whenStable();
+      await openPressure();
+
+      expect(fixture.nativeElement.querySelector('.average-value').textContent.trim()).toBe(
+        '120/80',
+      );
     });
 
     it('keeps a running test alive across a section switch', async () => {

@@ -39,16 +39,18 @@ describe('NavMenuComponent', () => {
   }
 
   it('renders one button per section', () => {
-    expect(buttons()).toHaveLength(3);
+    expect(buttons()).toHaveLength(4);
     expect(button('ЧЕЛЛЕНДЖИ')).toBeTruthy();
     expect(button('ККАЛ')).toBeTruthy();
     expect(button('ТЕСТ')).toBeTruthy();
+    expect(button('ДАВЛЕНИЕ')).toBeTruthy();
   });
 
   it('marks the active section', () => {
     expect(button('ЧЕЛЛЕНДЖИ').classList.contains('active')).toBe(true);
     expect(button('ККАЛ').classList.contains('active')).toBe(false);
     expect(button('ТЕСТ').classList.contains('active')).toBe(false);
+    expect(button('ДАВЛЕНИЕ').classList.contains('active')).toBe(false);
   });
 
   it('exposes the active section to assistive tech', () => {
@@ -68,6 +70,13 @@ describe('NavMenuComponent', () => {
     await fixture.whenStable();
 
     expect(host.emitted).toEqual(['quiz']);
+  });
+
+  it('emits the pressure section', async () => {
+    button('ДАВЛЕНИЕ').click();
+    await fixture.whenStable();
+
+    expect(host.emitted).toEqual(['pressure']);
   });
 
   it('does not re-emit when the active section is clicked again', async () => {

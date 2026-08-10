@@ -1,0 +1,129 @@
+.chart {
+  margin: 0;
+  padding: 0.7rem 0.6rem 0.6rem;
+  background: var(--panel);
+  border: 3px solid var(--panel-border);
+  box-shadow: 3px 3px 0 var(--shadow);
+}
+
+.chart-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.chart-title {
+  font-size: 0.45rem;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+
+.chart-days {
+  font-size: 0.4rem;
+  color: var(--ink-faint);
+}
+
+/* The viewBox keeps its aspect ratio, so the tiny axis type never stretches. */
+.plot {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--bg);
+  border: 2px solid var(--panel-border);
+}
+
+.grid-line {
+  stroke: var(--panel-border);
+  stroke-width: 0.5;
+  stroke-dasharray: 3 3;
+}
+
+.axis-text {
+  font-family: inherit;
+  font-size: 6px;
+  fill: var(--ink-faint);
+}
+
+.line {
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.dot {
+  stroke: var(--bg);
+  stroke-width: 0.6;
+}
+
+.line.systolic {
+  stroke: var(--danger);
+}
+
+.dot.systolic {
+  fill: var(--danger);
+}
+
+.legend-swatch.systolic {
+  background: var(--danger);
+}
+
+.line.diastolic {
+  stroke: var(--c-endurance);
+}
+
+.dot.diastolic {
+  fill: var(--c-endurance);
+}
+
+.legend-swatch.diastolic {
+  background: var(--c-endurance);
+}
+
+.line.pulse {
+  stroke: var(--accent);
+}
+
+.dot.pulse {
+  fill: var(--accent);
+}
+
+.legend-swatch.pulse {
+  background: var(--accent);
+}
+
+.chart-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 4rem;
+  margin: 0;
+  font-size: 0.4rem;
+  letter-spacing: 0.05em;
+  color: var(--ink-faint);
+  background: var(--bg);
+  border: 2px solid var(--panel-border);
+}
+
+.legend {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+  margin-top: 0.45rem;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.35rem;
+  letter-spacing: 0.03em;
+  color: var(--ink-faint);
+}
+
+.legend-swatch {
+  width: 0.5rem;
+  height: 0.2rem;
+}

@@ -37,6 +37,7 @@ export class NavMenuComponent {
     { view: 'challenges', label: 'ЧЕЛЛЕНДЖИ', icon: '🏆' },
     { view: 'calories', label: 'ККАЛ', icon: '🍞' },
     { view: 'quiz', label: 'ТЕСТ', icon: '🧠' },
+    { view: 'pressure', label: 'ДАВЛЕНИЕ', icon: '🩺' },
   ];
 
   select(view: AppView): void {
