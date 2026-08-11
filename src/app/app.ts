@@ -8,6 +8,7 @@ import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
 import { CaloriePageComponent } from './components/calorie-page/calorie-page.component';
 import { QuizPageComponent } from './components/quiz-page/quiz-page.component';
 import { PressurePageComponent } from './components/pressure-page/pressure-page.component';
+import { WeightPageComponent } from './components/weight-page/weight-page.component';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +20,7 @@ import { PressurePageComponent } from './components/pressure-page/pressure-page.
     CaloriePageComponent,
     QuizPageComponent,
     PressurePageComponent,
+    WeightPageComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './app.html',

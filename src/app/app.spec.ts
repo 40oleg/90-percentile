@@ -111,6 +111,11 @@ describe('App', () => {
       await fixture.whenStable();
     }
 
+    async function openWeight(): Promise<void> {
+      navButton('ВЕС').click();
+      await fixture.whenStable();
+    }
+
     it('opens on the challenges section by default', () => {
       expect(fixture.nativeElement.querySelector('app-calorie-page')).toBeNull();
       expect(cards().length).toBe(CHALLENGES.length);
@@ -261,6 +266,54 @@ describe('App', () => {
       expect(fixture.nativeElement.querySelector('.average-value').textContent.trim()).toBe(
         '120/80',
       );
+    });
+
+    it('switches to the weight section from the menu', async () => {
+      await openWeight();
+
+      expect(fixture.nativeElement.querySelector('app-weight-page')).toBeTruthy();
+      expect(fixture.nativeElement.querySelectorAll('app-weight-chart')).toHaveLength(1);
+      expect(fixture.nativeElement.querySelectorAll('.range-btn')).toHaveLength(3);
+    });
+
+    it('hides the other sections while on the weight diary', async () => {
+      await openWeight();
+
+      expect(cards().length).toBe(0);
+      expect(fixture.nativeElement.querySelector('app-calorie-page')).toBeNull();
+      expect(fixture.nativeElement.querySelector('app-pressure-page')).toBeNull();
+    });
+
+    it('remembers the weight section for the next launch', async () => {
+      await openWeight();
+      TestBed.tick();
+      expect(localStorage.getItem('90percentile.view')).toBe('weight');
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({ imports: [App] }).compileComponents();
+      const relaunched = TestBed.createComponent(App);
+      relaunched.autoDetectChanges();
+      await relaunched.whenStable();
+
+      expect(relaunched.nativeElement.querySelector('app-weight-page')).toBeTruthy();
+    });
+
+    it('keeps a logged weigh-in across a section switch', async () => {
+      await openWeight();
+      const root = fixture.nativeElement as HTMLElement;
+      const field = root.querySelector<HTMLInputElement>('.entry-input')!;
+      field.value = '74.5';
+      field.dispatchEvent(new Event('input'));
+      root
+        .querySelector('.entry-form')!
+        .dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      await fixture.whenStable();
+
+      navButton('ЧЕЛЛЕНДЖИ').click();
+      await fixture.whenStable();
+      await openWeight();
+
+      expect(fixture.nativeElement.querySelector('.current-value').textContent.trim()).toBe('74.5');
     });
 
     it('keeps a running test alive across a section switch', async () => {

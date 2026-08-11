@@ -39,11 +39,12 @@ describe('NavMenuComponent', () => {
   }
 
   it('renders one button per section', () => {
-    expect(buttons()).toHaveLength(4);
+    expect(buttons()).toHaveLength(5);
     expect(button('ЧЕЛЛЕНДЖИ')).toBeTruthy();
     expect(button('ККАЛ')).toBeTruthy();
     expect(button('ТЕСТ')).toBeTruthy();
     expect(button('ДАВЛЕНИЕ')).toBeTruthy();
+    expect(button('ВЕС')).toBeTruthy();
   });
 
   it('marks the active section', () => {
@@ -77,6 +78,13 @@ describe('NavMenuComponent', () => {
     await fixture.whenStable();
 
     expect(host.emitted).toEqual(['pressure']);
+  });
+
+  it('emits the weight section', async () => {
+    button('ВЕС').click();
+    await fixture.whenStable();
+
+    expect(host.emitted).toEqual(['weight']);
   });
 
   it('does not re-emit when the active section is clicked again', async () => {

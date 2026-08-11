@@ -1,6 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { CALORIE_NORM, CalorieService, MAX_ENTRY_KCAL, startOfDay } from './calorie.service';
+import {
+  AVERAGE_DAYS,
+  CALORIE_NORM,
+  CalorieService,
+  MAX_ENTRY_KCAL,
+  startOfDay,
+} from './calorie.service';
 
 const KEY = '90percentile.calories';
 
@@ -178,6 +184,66 @@ describe('CalorieService', () => {
     });
   });
 
+  describe('four-week window', () => {
+    it('spreads the average over four weeks at most', () => {
+      expect(AVERAGE_DAYS).toBe(28);
+
+      service.add(2800, dayAt(-100));
+      service.add(2800, dayAt(0));
+
+      // 100 days tracked, but only the last 28 count — and only today's entry
+      // falls inside them.
+      expect(service.daysTracked()).toBe(101);
+      expect(service.averageDays()).toBe(28);
+      expect(service.dailyAverage()).toBe(100);
+    });
+
+    it('ignores intakes older than the window', () => {
+      service.add(50_000, dayAt(-AVERAGE_DAYS));
+      service.add(2800, dayAt(0));
+
+      expect(service.windowKcal()).toBe(2800);
+      expect(service.dailyAverage()).toBe(100);
+    });
+
+    it('counts the oldest day still inside the window', () => {
+      service.add(2800, dayAt(-(AVERAGE_DAYS - 1)));
+
+      expect(service.windowKcal()).toBe(2800);
+      expect(service.averageDays()).toBe(28);
+      expect(service.dailyAverage()).toBe(100);
+    });
+
+    it('keeps every entry in the log however old it is', () => {
+      service.add(1000, dayAt(-400));
+      service.add(1000, dayAt(0));
+
+      expect(service.entries()).toHaveLength(2);
+      expect(service.entryCount()).toBe(2);
+      expect(service.totalKcal()).toBe(2000);
+    });
+
+    it('still averages over the tracked days while the log is younger', () => {
+      service.add(3000, dayAt(-1));
+
+      expect(service.averageDays()).toBe(2);
+      expect(service.dailyAverage()).toBe(1500);
+    });
+
+    it('drops out of the window as the days roll past', () => {
+      service.add(2800, dayAt(-(AVERAGE_DAYS - 1)));
+      expect(service.dailyAverage()).toBe(100);
+
+      vi.useFakeTimers();
+      vi.setSystemTime(dayAt(1));
+      service.syncToday();
+
+      expect(service.windowKcal()).toBe(0);
+      expect(service.dailyAverage()).toBe(0);
+      expect(service.entries()).toHaveLength(1);
+    });
+  });
+
   describe('norm', () => {
     it('is within norm at exactly 2200 per day', () => {
       service.add(CALORIE_NORM);
@@ -300,7 +366,11 @@ describe('CalorieService', () => {
         ]),
       );
 
-      expect(freshService().entries().map((e) => e.id)).toEqual(['b', 'c', 'a']);
+      expect(
+        freshService()
+          .entries()
+          .map((e) => e.id),
+      ).toEqual(['b', 'c', 'a']);
     });
 
     it('ignores malformed JSON', () => {

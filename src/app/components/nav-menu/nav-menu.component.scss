@@ -1,12 +1,15 @@
+/* Wraps onto a second row rather than squeezing the labels: five sections do
+   not fit across a narrow phone in one line. */
 .nav-menu {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
 }
 
-/* Stacked icon-over-label: keeps three (and later more) sections readable
-   without shrinking the font on narrow phones. */
+/* Stacked icon-over-label: keeps the sections readable without shrinking the
+   font on narrow phones. The basis is the widest label, `ЧЕЛЛЕНДЖИ`. */
 .nav-btn {
-  flex: 1 1 0;
+  flex: 1 1 5rem;
   display: flex;
   flex-direction: column;
   align-items: center;

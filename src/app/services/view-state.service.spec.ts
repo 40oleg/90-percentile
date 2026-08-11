@@ -57,6 +57,15 @@ describe('ViewStateService', () => {
     expect(freshService().view()).toBe('pressure');
   });
 
+  it('switches to the weight view', () => {
+    service.setView('weight');
+    TestBed.tick();
+
+    expect(service.view()).toBe('weight');
+    expect(localStorage.getItem(KEY)).toBe('weight');
+    expect(freshService().view()).toBe('weight');
+  });
+
   it('falls back to challenges for an unknown stored value', () => {
     localStorage.setItem(KEY, 'nonsense');
 

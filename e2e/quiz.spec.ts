@@ -366,7 +366,7 @@ test.describe('quiz section', () => {
     await page.setViewportSize({ width: 360, height: 740 });
     await openQuiz(page);
 
-    await expect(page.locator('.nav-btn')).toHaveCount(4);
+    await expect(page.locator('.nav-btn')).toHaveCount(5);
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );

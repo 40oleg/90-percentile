@@ -67,6 +67,28 @@ describe('CaloriePageComponent', () => {
       expect(averageValue().textContent!.trim()).toBe('0');
     });
 
+    it('names the days the average is spread over', async () => {
+      const caption = () => el('.average-caption').textContent!.trim();
+      expect(caption()).toBe('СРЕДНЕЕ ЗА ДЕНЬ · 0 ДН.');
+
+      await submit('1000');
+      expect(caption()).toBe('СРЕДНЕЕ ЗА ДЕНЬ · 1 ДН.');
+
+      calories.add(1000, dayAt(-40));
+      await fixture.whenStable();
+      // Four weeks is as far back as the average ever looks.
+      expect(caption()).toBe('СРЕДНЕЕ ЗА ДЕНЬ · 28 ДН.');
+    });
+
+    it('averages only the last four weeks, keeping the whole log', async () => {
+      calories.add(50_000, dayAt(-40));
+      calories.add(2800, dayAt(0));
+      await fixture.whenStable();
+
+      expect(averageValue().textContent!.trim()).toBe('100');
+      expect(root().querySelectorAll('.log-row')).toHaveLength(2);
+    });
+
     it('shows the daily average after an entry is logged', async () => {
       await submit('1000');
 

@@ -1,0 +1,81 @@
+<section class="weight-page">
+  <div class="current-panel">
+    <span class="current-caption">ТЕКУЩИЙ ВЕС</span>
+
+    @if (current(); as kg) {
+      <strong
+        class="current-value"
+        role="status"
+        [attr.aria-label]="'Текущий вес ' + kg + ' килограммов'"
+      >
+        {{ kg }}
+      </strong>
+      <span class="current-unit">КГ</span>
+    } @else {
+      <strong class="current-value empty" role="status">—</strong>
+      <span class="current-unit">ЗАМЕРОВ ПОКА НЕТ</span>
+    }
+  </div>
+
+  <div class="stats-row">
+    <span class="stat">
+      <span class="stat-label">ЗА ПЕРИОД</span>
+      <span [class]="'stat-value ' + changeClass()">{{ change() ?? '—' }}</span>
+    </span>
+    <span class="stat">
+      <span class="stat-label">МИН</span>
+      <span class="stat-value">{{ min() ?? '—' }}</span>
+    </span>
+    <span class="stat">
+      <span class="stat-label">МАКС</span>
+      <span class="stat-value">{{ max() ?? '—' }}</span>
+    </span>
+  </div>
+
+  <!-- novalidate: the section shows its own pixel-styled error instead of the
+       browser bubble, which would otherwise swallow the submit entirely. -->
+  <form class="entry-form" novalidate (submit)="onSubmit($event)">
+    <label class="entry-label" for="kg-input">СКОЛЬКО ВЕСИШЬ?</label>
+    <div class="entry-row">
+      <!-- A text field, not a number one: the phone keypad offers a comma for
+           the decimal separator and a number input would throw it away. -->
+      <input
+        id="kg-input"
+        class="entry-input"
+        type="text"
+        inputmode="decimal"
+        maxlength="6"
+        placeholder="74.5"
+        autocomplete="off"
+        [attr.aria-label]="'Вес в килограммах, от ' + limits.min + ' до ' + limits.max"
+        [value]="draft()"
+        (input)="onInput($event)"
+      />
+      <button type="submit" class="entry-submit">ДОБАВИТЬ</button>
+    </div>
+
+    @if (error()) {
+      <p class="entry-error" role="alert">{{ error() }}</p>
+    }
+  </form>
+
+  <div class="range-bar" role="group" aria-label="Период графика">
+    @for (range of weight.ranges; track range.id) {
+      <button
+        type="button"
+        class="range-btn"
+        [class.active]="weight.rangeId() === range.id"
+        [attr.aria-pressed]="weight.rangeId() === range.id"
+        (click)="onSelectRange(range.id)"
+      >
+        {{ range.label }}
+      </button>
+    }
+  </div>
+
+  <app-weight-chart
+    [points]="weight.series()"
+    [from]="weight.windowFrom()"
+    [to]="weight.windowTo()"
+  />
+</section>

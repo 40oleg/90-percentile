@@ -1,12 +1,14 @@
 <section class="calorie-page">
   <div class="average-panel" [class.over]="overNorm()">
-    <span class="average-caption">СРЕДНЕЕ ЗА ДЕНЬ</span>
+    <span class="average-caption">СРЕДНЕЕ ЗА ДЕНЬ · {{ averageDays() }} ДН.</span>
 
     <strong
       class="average-value"
       [class.over]="overNorm()"
       role="status"
-      [attr.aria-label]="'Среднее потребление ' + average() + ' килокалорий в день'"
+      [attr.aria-label]="
+        'Среднее потребление ' + average() + ' килокалорий в день за последние 4 недели'
+      "
     >
       {{ average() }}
     </strong>

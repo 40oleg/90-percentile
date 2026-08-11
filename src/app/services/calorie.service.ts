@@ -9,6 +9,9 @@ export const CALORIE_NORM = 2200;
 /** Highest single entry we accept — anything bigger is a typo, not a meal. */
 export const MAX_ENTRY_KCAL = 100_000;
 
+/** How far back the daily average looks: four weeks. */
+export const AVERAGE_DAYS = 28;
+
 const DAY_MS = 86_400_000;
 const DAY_TICK_MS = 60_000;
 
@@ -17,10 +20,17 @@ export function startOfDay(date: Date): number {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
 }
 
+/** Calendar-day arithmetic, so a DST switch never shifts a day boundary. */
+function shiftDay(dayStart: number, days: number): number {
+  const d = new Date(dayStart);
+  d.setDate(d.getDate() + days);
+  return d.getTime();
+}
+
 /**
- * Calorie log: every intake the user records is kept forever (never rotated),
- * so the daily average is measured over the whole tracked span — from the first
- * entry's day up to today, including days with nothing logged.
+ * Calorie log: every intake the user records is kept forever (never rotated)
+ * and the whole log stays on screen, but the daily average only looks at the
+ * last {@link AVERAGE_DAYS} days — including days with nothing logged.
  */
 @Injectable({ providedIn: 'root' })
 export class CalorieService {
@@ -49,9 +59,27 @@ export class CalorieService {
     return Math.max(1, span);
   });
 
+  /** Oldest day the average counts, local midnight. */
+  private readonly averageFrom = computed(() => shiftDay(this.todayStart(), -(AVERAGE_DAYS - 1)));
+
+  /** Kcal logged inside the averaging window. */
+  readonly windowKcal = computed(() => {
+    const from = this.averageFrom();
+    return this.entries()
+      .filter((e) => startOfDay(new Date(e.at)) >= from)
+      .reduce((sum, e) => sum + e.kcal, 0);
+  });
+
+  /**
+   * Days the average is spread over: the four-week window once the log is that
+   * old, and only the tracked days before that — a fresh log is not diluted by
+   * weeks that predate it.
+   */
+  readonly averageDays = computed(() => Math.min(this.daysTracked(), AVERAGE_DAYS));
+
   readonly dailyAverage = computed(() => {
-    const days = this.daysTracked();
-    return days === 0 ? 0 : Math.round(this.totalKcal() / days);
+    const days = this.averageDays();
+    return days === 0 ? 0 : Math.round(this.windowKcal() / days);
   });
 
   readonly overNorm = computed(() => this.dailyAverage() > CALORIE_NORM);

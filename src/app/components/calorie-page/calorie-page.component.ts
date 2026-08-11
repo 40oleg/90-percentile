@@ -25,6 +25,7 @@ export class CaloriePageComponent {
   protected readonly error = signal<string | null>(null);
 
   protected readonly average = this.calories.dailyAverage;
+  protected readonly averageDays = this.calories.averageDays;
   protected readonly overNorm = this.calories.overNorm;
 
   /** How full the day's budget is, capped at 100% so the bar never overflows. */

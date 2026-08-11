@@ -51,6 +51,20 @@ test.describe('calorie section', () => {
     await expect(page.locator('.average-value')).toHaveCount(0);
   });
 
+  test('the average only counts the last four weeks, the log keeps everything', async ({
+    page,
+  }) => {
+    await seed(page, [
+      { id: 'ancient', kcal: 50000, at: dayAt(-40) },
+      { id: 'today', kcal: 2800, at: dayAt(0) },
+    ]);
+    await page.goto('/');
+
+    await expect(page.locator('.average-value')).toHaveText('100');
+    await expect(page.locator('.average-caption')).toHaveText('СРЕДНЕЕ ЗА ДЕНЬ · 28 ДН.');
+    await expect(page.locator('.log-row')).toHaveCount(2);
+  });
+
   test('starts empty with a zero average and a prompt to log something', async ({ page }) => {
     await openCalories(page);
 
