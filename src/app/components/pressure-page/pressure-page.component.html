@@ -62,13 +62,14 @@
         <span class="field-label">ВЕРХНЕЕ</span>
         <input
           class="field-input"
-          type="number"
+          type="text"
           inputmode="numeric"
-          [attr.min]="limits.systolic.min"
-          [attr.max]="limits.systolic.max"
-          step="1"
+          maxlength="3"
           placeholder="120"
           autocomplete="off"
+          [attr.aria-label]="
+            fieldLabels.systolic + ', от ' + limits.systolic.min + ' до ' + limits.systolic.max
+          "
           [value]="systolic()"
           (input)="onInput('systolic', $event)"
         />
@@ -77,14 +78,16 @@
       <label class="field">
         <span class="field-label">НИЖНЕЕ</span>
         <input
+          #diastolicField
           class="field-input"
-          type="number"
+          type="text"
           inputmode="numeric"
-          [attr.min]="limits.diastolic.min"
-          [attr.max]="limits.diastolic.max"
-          step="1"
+          maxlength="3"
           placeholder="80"
           autocomplete="off"
+          [attr.aria-label]="
+            fieldLabels.diastolic + ', от ' + limits.diastolic.min + ' до ' + limits.diastolic.max
+          "
           [value]="diastolic()"
           (input)="onInput('diastolic', $event)"
         />
@@ -93,14 +96,16 @@
       <label class="field">
         <span class="field-label">ПУЛЬС</span>
         <input
+          #pulseField
           class="field-input"
-          type="number"
+          type="text"
           inputmode="numeric"
-          [attr.min]="limits.pulse.min"
-          [attr.max]="limits.pulse.max"
-          step="1"
+          maxlength="3"
           placeholder="65"
           autocomplete="off"
+          [attr.aria-label]="
+            fieldLabels.pulse + ', от ' + limits.pulse.min + ' до ' + limits.pulse.max
+          "
           [value]="pulse()"
           (input)="onInput('pulse', $event)"
         />

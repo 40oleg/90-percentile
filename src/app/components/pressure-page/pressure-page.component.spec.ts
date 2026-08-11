@@ -162,6 +162,115 @@ describe('PressurePageComponent', () => {
     });
   });
 
+  describe('auto-advance', () => {
+    /** Types `text` into the field one character at a time, as a thumb would. */
+    async function typeInto(index: number, text: string): Promise<void> {
+      const field = inputs()[index];
+      field.focus();
+      for (const char of text) {
+        field.value += char;
+        field.dispatchEvent(new Event('input'));
+        await fixture.whenStable();
+      }
+    }
+
+    /** Types into whichever field holds the caret — the thumb never aims. */
+    async function typeBlind(text: string): Promise<void> {
+      for (const char of text) {
+        const field = document.activeElement as HTMLInputElement;
+        field.value += char;
+        field.dispatchEvent(new Event('input'));
+        await fixture.whenStable();
+      }
+    }
+
+    function focused(): Element | null {
+      return document.activeElement;
+    }
+
+    it('hands the caret to the lower field after three digits up top', async () => {
+      await typeInto(0, '120');
+
+      expect(focused()).toBe(inputs()[1]);
+    });
+
+    it('stays in the upper field while it is unfinished', async () => {
+      await typeInto(0, '12');
+
+      expect(focused()).toBe(inputs()[0]);
+    });
+
+    it('hands the caret to the pulse after two digits in the lower field', async () => {
+      await typeInto(1, '80');
+
+      expect(focused()).toBe(inputs()[2]);
+    });
+
+    it('stays in the lower field after a single digit', async () => {
+      await typeInto(1, '8');
+
+      expect(focused()).toBe(inputs()[1]);
+    });
+
+    it('lets go of the caret after two digits of pulse, dropping the keyboard', async () => {
+      await typeInto(2, '65');
+
+      expect(focused()).not.toBe(inputs()[2]);
+    });
+
+    it('walks the whole reading without a single tap on a field', async () => {
+      inputs()[0].focus();
+      await typeBlind('1208065');
+
+      expect(inputs().map((i) => i.value)).toEqual(['120', '80', '65']);
+      expect(focused()).not.toBe(inputs()[2]);
+    });
+
+    it('selects what is already there, so a correction overwrites it', async () => {
+      await type(['', '80', '']);
+      await typeInto(0, '120');
+
+      const diastolic = inputs()[1];
+      expect(focused()).toBe(diastolic);
+      expect(diastolic.selectionStart).toBe(0);
+      expect(diastolic.selectionEnd).toBe(2);
+    });
+
+    it('keeps only digits, so stray characters never count towards the jump', async () => {
+      await typeInto(0, '1a2');
+
+      expect(inputs()[0].value).toBe('12');
+      expect(focused()).toBe(inputs()[0]);
+    });
+
+    it('stops at three digits', async () => {
+      await typeInto(2, '1234');
+
+      expect(inputs()[2].value).toBe('123');
+    });
+
+    // The jump is by digit count, so a lower value of 100+ spills its last digit
+    // into the pulse. Two digits is the right cut for 60–99, which is the norm.
+    it('sends the third digit of a 100+ lower value on to the pulse', async () => {
+      inputs()[1].focus();
+      await typeBlind('105');
+
+      expect(inputs()[1].value).toBe('10');
+      expect(inputs()[2].value).toBe('5');
+    });
+
+    it('still records the reading typed straight through', async () => {
+      inputs()[0].focus();
+      await typeBlind('1208065');
+      el<HTMLFormElement>('.entry-form').dispatchEvent(
+        new Event('submit', { bubbles: true, cancelable: true }),
+      );
+      await fixture.whenStable();
+
+      expect(pressure.entries()[0]).toMatchObject({ systolic: 120, diastolic: 80, pulse: 65 });
+    });
+  });
+
   describe('validation', () => {
     it('refuses an empty form', async () => {
       await submit(['', '', '']);

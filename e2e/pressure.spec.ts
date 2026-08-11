@@ -83,6 +83,63 @@ test.describe('pressure section', () => {
     await expect(page.locator('svg.plot')).toHaveCount(1);
   });
 
+  test('the caret walks the fields as the digits fill them', async ({ page }) => {
+    await openPressure(page);
+    const fields = page.locator('.field-input');
+
+    await fields.nth(0).focus();
+    await page.keyboard.type('120');
+    await expect(fields.nth(1)).toBeFocused();
+
+    await page.keyboard.type('80');
+    await expect(fields.nth(2)).toBeFocused();
+
+    await page.keyboard.type('65');
+    // Nothing holds the caret any more, so the phone keyboard drops.
+    await expect(fields.nth(2)).not.toBeFocused();
+    await expect(page.locator('.field-input:focus')).toHaveCount(0);
+
+    await expect(fields.nth(0)).toHaveValue('120');
+    await expect(fields.nth(1)).toHaveValue('80');
+    await expect(fields.nth(2)).toHaveValue('65');
+
+    await page.locator('.entry-submit').click();
+    await expect(page.locator('.average-value')).toHaveText('120/80');
+  });
+
+  test('the caret waits while a field is still short', async ({ page }) => {
+    await openPressure(page);
+    const fields = page.locator('.field-input');
+
+    await fields.nth(0).focus();
+    await page.keyboard.type('12');
+
+    await expect(fields.nth(0)).toBeFocused();
+  });
+
+  test('a jump selects the old value, so retyping replaces it', async ({ page }) => {
+    await openPressure(page);
+    const fields = page.locator('.field-input');
+
+    await fields.nth(1).fill('80');
+    await fields.nth(0).focus();
+    await page.keyboard.type('130');
+    await page.keyboard.type('90');
+
+    await expect(fields.nth(1)).toHaveValue('90');
+    await expect(fields.nth(2)).toBeFocused();
+  });
+
+  test('the fields take digits only, three at most', async ({ page }) => {
+    await openPressure(page);
+    const fields = page.locator('.field-input');
+
+    await fields.nth(2).focus();
+    await page.keyboard.type('6a5');
+
+    await expect(fields.nth(2)).toHaveValue('65');
+  });
+
   test('a bad reading is rejected with a message', async ({ page }) => {
     await openPressure(page);
     await logReading(page, '80', '120', '65');
