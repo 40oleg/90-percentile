@@ -80,7 +80,7 @@ test.describe('quiz section', () => {
 
     await page.locator('.nav-btn', { hasText: 'ТЕСТ' }).click();
 
-    await expect(page.locator('.topic')).toHaveCount(3);
+    await expect(page.locator('.topic')).toHaveCount(4);
     await expect(page.locator('.card')).toHaveCount(0);
     await expect(page.locator('.start-btn')).toContainText('15 ВОПРОСОВ');
   });
@@ -100,9 +100,37 @@ test.describe('quiz section', () => {
     await page.locator('.start-btn').click();
 
     await expect(page.locator('.runner-step')).toHaveText('ВОПРОС 1/15');
-    await expect(page.locator('.option')).toHaveCount(4);
+    // Four answers plus «НЕ ЗНАЮ».
+    await expect(page.locator('.option')).toHaveCount(5);
+    await expect(page.locator('.option.dont-know')).toHaveText(/НЕ ЗНАЮ/);
     await expect(page.locator('.segment')).toHaveCount(15);
     await expect(page.locator('.prompt')).not.toBeEmpty();
+  });
+
+  test('«НЕ ЗНАЮ» is an honest miss, not a wrong answer', async ({ page }) => {
+    await openQuiz(page);
+    await page.locator('.start-btn').click();
+
+    await page.locator('.option.dont-know').click();
+
+    await expect(page.locator('.option.skipped')).toHaveCount(1);
+    await expect(page.locator('.option.wrong')).toHaveCount(0);
+    await expect(page.locator('.option.correct')).toHaveCount(1);
+    await expect(page.locator('.feedback-title')).toHaveText('НЕ СТРАШНО');
+    await expect(page.locator('.runner-score')).toContainText('0');
+  });
+
+  test('a run answered entirely with «НЕ ЗНАЮ» scores zero', async ({ page }) => {
+    await openQuiz(page);
+    await page.locator('.start-btn').click();
+
+    for (let i = 0; i < 15; i++) {
+      await page.locator('.option.dont-know').click();
+      await page.locator('.next-btn').click();
+    }
+
+    await expect(page.locator('.score-value')).toHaveText('0%');
+    await expect(page.locator('.miss')).toHaveCount(15);
   });
 
   test('answering reveals the right option and an explanation', async ({ page }) => {

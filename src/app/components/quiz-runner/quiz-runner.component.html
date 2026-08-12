@@ -21,7 +21,7 @@
         <button
           type="button"
           class="option"
-          [class]="'option ' + optionState(i)"
+          [class]="'option ' + optionState(i) + (isDontKnowOption(option) ? ' dont-know' : '')"
           [disabled]="isAnswered()"
           (click)="onAnswer(i)"
         >
@@ -32,8 +32,8 @@
     </div>
 
     @if (isAnswered()) {
-      <div class="feedback" [class.ok]="isCorrect()" role="status">
-        <span class="feedback-title">{{ isCorrect() ? 'ВЕРНО' : 'НЕВЕРНО' }}</span>
+      <div class="feedback" [class.ok]="isCorrect()" [class.skipped]="isSkipped()" role="status">
+        <span class="feedback-title">{{ verdict() }}</span>
         <p class="feedback-text">{{ question.explanation }}</p>
       </div>
 

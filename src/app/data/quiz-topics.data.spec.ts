@@ -8,6 +8,7 @@ import {
 import { AI_QUESTIONS } from './quiz/ai.questions';
 import { ANGULAR_QUESTIONS } from './quiz/angular.questions';
 import { MATH_QUESTIONS } from './quiz/math.questions';
+import { PATTERNS_QUESTIONS } from './quiz/patterns.questions';
 import { QuizTopic } from '../models/quiz.model';
 
 describe('quiz topics', () => {
@@ -118,6 +119,7 @@ describe.each([
   ['angular', ANGULAR_QUESTIONS],
   ['ai', AI_QUESTIONS],
   ['math', MATH_QUESTIONS],
+  ['patterns', PATTERNS_QUESTIONS],
 ])('%s question pack', (topicId, pack) => {
   it('holds at least 100 questions', () => {
     expect(pack.length).toBeGreaterThanOrEqual(100);
@@ -138,38 +140,43 @@ describe('question ids across packs', () => {
 /**
  * A pack is worthless if the right answer can be picked without knowing the
  * subject, and the cheapest such tell is length: the elaborate option is the
- * correct one. These bounds lock that in for the Angular pack; the other packs
- * still have to be cleaned up the same way.
+ * correct one. These bounds lock that in for the packs that have been cleaned
+ * up; the remaining ones still have to be brought to the same bar.
  */
-describe('angular pack cannot be answered by option length', () => {
-  const lengths = (q: (typeof ANGULAR_QUESTIONS)[number]) => q.options.map((o) => o.length);
-  const margin = (q: (typeof ANGULAR_QUESTIONS)[number]) => {
+describe.each([
+  ['angular', ANGULAR_QUESTIONS],
+  ['patterns', PATTERNS_QUESTIONS],
+])('%s pack cannot be answered by option length', (_id, pack) => {
+  const lengths = (q: (typeof pack)[number]) => q.options.map((o) => o.length);
+  const margin = (q: (typeof pack)[number]) => {
     const lens = lengths(q);
     const others = lens.filter((_, i) => i !== q.correctIndex);
     return lens[q.correctIndex] - Math.max(...others);
   };
 
   it('never lets the correct option run away from the longest distractor', () => {
-    const offenders = ANGULAR_QUESTIONS.filter((q) => margin(q) > 6).map((q) => q.id);
+    const offenders = pack.filter((q) => margin(q) > 6).map((q) => q.id);
     expect(offenders).toEqual([]);
   });
 
   it('keeps all four options within one length band', () => {
-    const offenders = ANGULAR_QUESTIONS.filter((q) => {
-      const lens = lengths(q);
-      return Math.max(...lens) - Math.min(...lens) > 24;
-    }).map((q) => q.id);
+    const offenders = pack
+      .filter((q) => {
+        const lens = lengths(q);
+        return Math.max(...lens) - Math.min(...lens) > 24;
+      })
+      .map((q) => q.id);
     expect(offenders).toEqual([]);
   });
 
   it('leaves the longest option on a distractor most of the time', () => {
-    const longest = ANGULAR_QUESTIONS.filter((q) => margin(q) > 0).length;
-    expect(longest / ANGULAR_QUESTIONS.length).toBeLessThanOrEqual(0.45);
+    const longest = pack.filter((q) => margin(q) > 0).length;
+    expect(longest / pack.length).toBeLessThanOrEqual(0.45);
   });
 
   it('spreads the stored correct answer over all four positions', () => {
     const counts = [0, 0, 0, 0];
-    for (const question of ANGULAR_QUESTIONS) counts[question.correctIndex]++;
-    expect(Math.min(...counts)).toBeGreaterThan(ANGULAR_QUESTIONS.length / 8);
+    for (const question of pack) counts[question.correctIndex]++;
+    expect(Math.min(...counts)).toBeGreaterThan(pack.length / 8);
   });
 });

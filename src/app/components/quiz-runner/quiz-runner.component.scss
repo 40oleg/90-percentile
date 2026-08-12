@@ -164,6 +164,33 @@
   opacity: 0.65;
 }
 
+/* «НЕ ЗНАЮ» is an honest answer, not a wrong one: it sits apart from the four
+   and is marked in neutral grey rather than red when picked. */
+.option.dont-know {
+  min-height: 2.1rem;
+  margin-top: 0.25rem;
+  font-size: 0.45rem;
+  color: var(--ink-faint);
+  border-style: dashed;
+}
+
+.option.dont-know .option-key {
+  color: var(--ink-faint);
+}
+
+.option.skipped {
+  color: var(--ink-dim);
+  border-color: var(--ink-faint);
+  border-style: solid;
+  opacity: 1;
+}
+
+.option.skipped .option-key {
+  color: var(--bg);
+  background: var(--ink-faint);
+  border-color: var(--ink-faint);
+}
+
 /* ---- Feedback ---- */
 
 .feedback {
@@ -188,6 +215,14 @@
 
 .feedback.ok .feedback-title {
   color: var(--ok);
+}
+
+.feedback.skipped {
+  border-color: var(--ink-faint);
+}
+
+.feedback.skipped .feedback-title {
+  color: var(--ink-dim);
 }
 
 .feedback-text {

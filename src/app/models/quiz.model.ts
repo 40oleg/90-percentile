@@ -1,3 +1,10 @@
+/**
+ * The escape hatch offered on every question. It is appended to a run rather
+ * than stored in a pack, always sits last, and never counts as correct — the
+ * point is an honest "I don't know" instead of a guess that pollutes the stats.
+ */
+export const DONT_KNOW_OPTION = 'НЕ ЗНАЮ';
+
 /** A single multiple-choice question. Exactly four options, one of them right. */
 export interface QuizQuestion {
   id: string;
@@ -32,7 +39,10 @@ export interface QuizAttempt {
   at: string;
 }
 
-/** One question inside a running test: options already shuffled for this run. */
+/**
+ * One question inside a running test: the four options already shuffled for
+ * this run, with {@link DONT_KNOW_OPTION} appended as the last one.
+ */
 export interface SessionQuestion {
   id: string;
   prompt: string;
@@ -41,6 +51,12 @@ export interface SessionQuestion {
   explanation: string;
   /** Which option the user picked, or null while unanswered. */
   answeredIndex: number | null;
+}
+
+/** Whether the pick on this question was the "I don't know" one. */
+export function isDontKnow(question: SessionQuestion): boolean {
+  const picked = question.answeredIndex;
+  return picked !== null && question.options[picked] === DONT_KNOW_OPTION;
 }
 
 /** Whole-number percentage of correct answers, 0 when nothing was asked. */

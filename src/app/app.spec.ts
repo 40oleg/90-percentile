@@ -327,7 +327,8 @@ describe('App', () => {
       await openQuiz();
 
       expect(fixture.nativeElement.querySelector('.runner-step').textContent.trim()).toBe(step);
-      expect(fixture.nativeElement.querySelectorAll('.option')).toHaveLength(4);
+      // Four answers plus «НЕ ЗНАЮ».
+      expect(fixture.nativeElement.querySelectorAll('.option')).toHaveLength(5);
     });
 
     it('keeps challenge progress intact across a quiz switch', async () => {

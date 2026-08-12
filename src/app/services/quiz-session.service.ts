@@ -1,5 +1,11 @@
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
-import { QuizQuestion, QuizTopic, SessionQuestion, scorePercent } from '../models/quiz.model';
+import {
+  DONT_KNOW_OPTION,
+  QuizQuestion,
+  QuizTopic,
+  SessionQuestion,
+  scorePercent,
+} from '../models/quiz.model';
 import { findTopic, questionsPerRun } from '../data/quiz-topics.data';
 import { QuizService } from './quiz.service';
 
@@ -184,7 +190,9 @@ function drawQuestions(topic: QuizTopic, rng: Rng): SessionQuestion[] {
 
 function toSessionQuestion(question: QuizQuestion, rng: Rng): SessionQuestion {
   const correct = question.options[question.correctIndex];
-  const options = shuffle(question.options, rng);
+  // Shuffled first, then "не знаю" on the end: it has to stay in the same place
+  // on every question, or it gets picked by accident.
+  const options = [...shuffle(question.options, rng), DONT_KNOW_OPTION];
   return {
     id: question.id,
     prompt: question.prompt,

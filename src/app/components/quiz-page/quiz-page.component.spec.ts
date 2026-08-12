@@ -120,8 +120,8 @@ describe('QuizPageComponent', () => {
       await fixture.whenStable();
     }
 
-    it('lists all three topics with their own pools', () => {
-      expect(all('.topic')).toHaveLength(3);
+    it('lists every topic with its own pool', () => {
+      expect(all('.topic')).toHaveLength(QUIZ_TOPICS.length);
       const pools = all('.topic-pool').map((p) => p.textContent!.trim());
       expect(new Set(pools).size).toBeGreaterThan(1);
     });

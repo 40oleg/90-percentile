@@ -2,18 +2,22 @@ import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { QuizRunnerComponent } from './quiz-runner.component';
-import { SessionQuestion } from '../../models/quiz.model';
+import { DONT_KNOW_OPTION, SessionQuestion } from '../../models/quiz.model';
 
+/** Shaped like a real run: four answers with «НЕ ЗНАЮ» appended by the session. */
 function question(n: number, answeredIndex: number | null = null): SessionQuestion {
   return {
     id: `q${n}`,
     prompt: `Вопрос ${n}?`,
-    options: [`ответ ${n}A`, `ответ ${n}B`, `ответ ${n}C`, `ответ ${n}D`],
+    options: [`ответ ${n}A`, `ответ ${n}B`, `ответ ${n}C`, `ответ ${n}D`, DONT_KNOW_OPTION],
     correctIndex: 1,
     explanation: `объяснение ${n}`,
     answeredIndex,
   };
 }
+
+/** Index of the «НЕ ЗНАЮ» button — always the last one. */
+const DONT_KNOW = 4;
 
 @Component({
   standalone: true,
@@ -80,13 +84,14 @@ describe('QuizRunnerComponent', () => {
     expect(text('.runner-step')).toBe('ВОПРОС 1/3');
   });
 
-  it('renders the four options with pixel letters', () => {
-    expect(options()).toHaveLength(4);
+  it('renders the four answers plus «НЕ ЗНАЮ» with pixel letters', () => {
+    expect(options()).toHaveLength(5);
     expect(options().map((b) => b.querySelector('.option-key')!.textContent!.trim())).toEqual([
       'А',
       'Б',
       'В',
       'Г',
+      'Д',
     ]);
     expect(options()[0].querySelector('.option-text')!.textContent!.trim()).toBe('ответ 1A');
   });
@@ -215,6 +220,62 @@ describe('QuizRunnerComponent', () => {
       await fixture.whenStable();
 
       expect(text('.quit-btn')).toBe('ВЫЙТИ');
+    });
+  });
+
+  describe('«НЕ ЗНАЮ»', () => {
+    it('stands apart from the four answers', () => {
+      expect(options()[DONT_KNOW].textContent).toContain(DONT_KNOW_OPTION);
+      expect(options()[DONT_KNOW].className).toContain('dont-know');
+      expect(options()[0].className).not.toContain('dont-know');
+    });
+
+    it('reports the pick like any other option', async () => {
+      options()[DONT_KNOW].click();
+      await fixture.whenStable();
+
+      expect(host.answered).toEqual([DONT_KNOW]);
+    });
+
+    it('is marked as a skip, not as a wrong answer', async () => {
+      await answerWith(DONT_KNOW);
+
+      expect(options()[DONT_KNOW].className).toContain('skipped');
+      expect(options()[DONT_KNOW].className).not.toContain('wrong');
+    });
+
+    it('still reveals the right answer', async () => {
+      await answerWith(DONT_KNOW);
+
+      expect(options()[1].className).toContain('correct');
+    });
+
+    it('is answered with a gentler verdict than a wrong pick', async () => {
+      await answerWith(DONT_KNOW);
+
+      expect(text('.feedback-title')).toBe('НЕ СТРАШНО');
+      expect(el('.feedback').className).toContain('skipped');
+      expect(text('.feedback-text')).toBe('объяснение 1');
+    });
+
+    it('says НЕВЕРНО for an actual wrong answer', async () => {
+      await answerWith(0);
+
+      expect(text('.feedback-title')).toBe('НЕВЕРНО');
+      expect(el('.feedback').className).not.toContain('skipped');
+    });
+
+    it('does not count towards the score', async () => {
+      await answerWith(DONT_KNOW);
+
+      expect(text('.runner-score')).toContain('0');
+    });
+
+    it('leaves the run segment marked as a miss', async () => {
+      await answerWith(DONT_KNOW);
+
+      const segments = Array.from(root().querySelectorAll('.segment'));
+      expect(segments[0].className).toContain('wrong');
     });
   });
 

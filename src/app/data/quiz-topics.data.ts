@@ -2,6 +2,7 @@ import { QuizTopic } from '../models/quiz.model';
 import { AI_QUESTIONS } from './quiz/ai.questions';
 import { ANGULAR_QUESTIONS } from './quiz/angular.questions';
 import { MATH_QUESTIONS } from './quiz/math.questions';
+import { PATTERNS_QUESTIONS } from './quiz/patterns.questions';
 
 /** How many questions one run asks, unless a topic overrides it. */
 export const DEFAULT_QUESTIONS_PER_RUN = 15;
@@ -28,6 +29,13 @@ export const QUIZ_TOPICS: readonly QuizTopic[] = [
     icon: '🤖',
     description: 'Агенты, харнес, MCP, контекст, кэш',
     questions: AI_QUESTIONS,
+  },
+  {
+    id: 'patterns',
+    title: 'ПАТТЕРНЫ',
+    icon: '🧩',
+    description: 'GoF: порождающие, структурные, поведенческие',
+    questions: PATTERNS_QUESTIONS,
   },
   {
     id: 'math',

@@ -7,12 +7,12 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { SessionQuestion } from '../../models/quiz.model';
+import { DONT_KNOW_OPTION, SessionQuestion, isDontKnow } from '../../models/quiz.model';
 
-type OptionState = 'idle' | 'correct' | 'wrong' | 'muted';
+type OptionState = 'idle' | 'correct' | 'wrong' | 'muted' | 'skipped';
 type SegmentState = 'correct' | 'wrong' | 'current' | 'todo';
 
-/** The question screen: prompt, four options, feedback, next. */
+/** The question screen: prompt, four options plus «НЕ ЗНАЮ», feedback, next. */
 @Component({
   selector: 'app-quiz-runner',
   standalone: true,
@@ -28,7 +28,7 @@ export class QuizRunnerComponent {
   readonly advanced = output<void>();
   readonly quit = output<void>();
 
-  protected readonly letters = ['А', 'Б', 'В', 'Г'] as const;
+  protected readonly letters = ['А', 'Б', 'В', 'Г', 'Д'] as const;
 
   protected readonly current = computed<SessionQuestion | null>(
     () => this.questions()[this.index()] ?? null,
@@ -39,6 +39,15 @@ export class QuizRunnerComponent {
   protected readonly isCorrect = computed(() => {
     const question = this.current();
     return !!question && question.answeredIndex === question.correctIndex;
+  });
+  /** An owned-up blank rather than a wrong answer — worth saying differently. */
+  protected readonly isSkipped = computed(() => {
+    const question = this.current();
+    return !!question && isDontKnow(question);
+  });
+  protected readonly verdict = computed(() => {
+    if (this.isCorrect()) return 'ВЕРНО';
+    return this.isSkipped() ? 'НЕ СТРАШНО' : 'НЕВЕРНО';
   });
   protected readonly correctCount = computed(
     () => this.questions().filter((q) => q.answeredIndex === q.correctIndex).length,
@@ -61,12 +70,16 @@ export class QuizRunnerComponent {
     });
   }
 
+  protected isDontKnowOption(option: string): boolean {
+    return option === DONT_KNOW_OPTION;
+  }
+
   protected optionState(optionIndex: number): OptionState {
     const question = this.current();
     if (!question || question.answeredIndex === null) return 'idle';
     if (optionIndex === question.correctIndex) return 'correct';
-    if (optionIndex === question.answeredIndex) return 'wrong';
-    return 'muted';
+    if (optionIndex !== question.answeredIndex) return 'muted';
+    return this.isDontKnowOption(question.options[optionIndex]) ? 'skipped' : 'wrong';
   }
 
   protected onAnswer(optionIndex: number): void {

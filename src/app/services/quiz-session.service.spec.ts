@@ -4,7 +4,7 @@ import { QuizSessionService, shuffle } from './quiz-session.service';
 import { QuizService } from './quiz.service';
 import { ANGULAR_QUESTIONS } from '../data/quiz/angular.questions';
 import { DEFAULT_QUESTIONS_PER_RUN } from '../data/quiz-topics.data';
-import { SessionQuestion } from '../models/quiz.model';
+import { DONT_KNOW_OPTION, SessionQuestion, isDontKnow } from '../models/quiz.model';
 
 const SESSION_KEY = '90percentile.quiz.session';
 
@@ -89,8 +89,9 @@ describe('QuizSessionService', () => {
 
       for (const drawn of session.questions()) {
         const source = ANGULAR_QUESTIONS.find((q) => q.id === drawn.id)!;
+        const offered = drawn.options.slice(0, -1);
         expect(drawn.options[drawn.correctIndex]).toBe(source.options[source.correctIndex]);
-        expect([...drawn.options].sort()).toEqual([...source.options].sort());
+        expect([...offered].sort()).toEqual([...source.options].sort());
       }
     });
 
@@ -118,6 +119,59 @@ describe('QuizSessionService', () => {
 
       expect(session.status()).toBe('idle');
       expect(session.questions()).toEqual([]);
+    });
+  });
+
+  describe('the "не знаю" option', () => {
+    beforeEach(() => {
+      session.start('angular', seeded(7));
+    });
+
+    it('is offered on every question of the run', () => {
+      for (const question of session.questions()) {
+        expect(question.options.filter((o) => o === DONT_KNOW_OPTION)).toHaveLength(1);
+      }
+    });
+
+    it('always sits last, however the options fell', () => {
+      for (const question of session.questions()) {
+        expect(question.options.at(-1)).toBe(DONT_KNOW_OPTION);
+      }
+    });
+
+    it('brings every question to five options', () => {
+      for (const question of session.questions()) {
+        expect(question.options).toHaveLength(5);
+      }
+    });
+
+    it('is never the right answer', () => {
+      for (const question of session.questions()) {
+        expect(question.options[question.correctIndex]).not.toBe(DONT_KNOW_OPTION);
+        expect(question.correctIndex).toBeLessThan(question.options.length - 1);
+      }
+    });
+
+    it('is accepted as an answer and reported as not right', () => {
+      const last = session.current()!.options.length - 1;
+
+      expect(session.answer(last)).toBe(false);
+      expect(session.current()!.answeredIndex).toBe(last);
+      expect(isDontKnow(session.current()!)).toBe(true);
+    });
+
+    it('scores nothing and lands in the mistakes for review', () => {
+      session.answer(session.current()!.options.length - 1);
+
+      expect(session.correctCount()).toBe(0);
+      expect(session.answeredCount()).toBe(1);
+      expect(session.mistakes()).toHaveLength(1);
+    });
+
+    it('leaves a picked answer alone: a real pick is not a "не знаю"', () => {
+      session.answer(session.current()!.correctIndex);
+
+      expect(isDontKnow(session.current()!)).toBe(false);
     });
   });
 
@@ -151,7 +205,7 @@ describe('QuizSessionService', () => {
       expect(session.current()!.answeredIndex).toBe(correct);
     });
 
-    it.each([-1, 4, 99, 1.5, Number.NaN])('ignores the out-of-range pick %p', (pick) => {
+    it.each([-1, 5, 99, 1.5, Number.NaN])('ignores the out-of-range pick %p', (pick) => {
       expect(session.answer(pick)).toBeNull();
       expect(session.answeredCount()).toBe(0);
     });
